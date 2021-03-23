@@ -1,0 +1,31 @@
+{
+  "name": "@aha-develop/zendesk",
+  "description": "Zendesk integration extension",
+  "version": "0.0.0",
+  "author": "Aha!",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aha-develop/zendesk"
+  },
+  "dependencies": {},
+  "license": "MIT",
+  "ahaExtension": {
+    "contributes": {
+      "importers": {
+        "import": {
+          "title": "Zendesk tickets",
+          "entryPoint": "src/import.js"
+        }
+      },
+      "settings": {
+        "subdomain": {
+          "title": "Subdomain",
+          "scope": [
+            "account"
+          ],
+          "type": "string"
+        }
+      }
+    }
+  }
+}
