@@ -10,6 +10,9 @@
   "dependencies": {},
   "license": "MIT",
   "ahaExtension": {
+    "cspSources": [
+      "https://*.zendesk.com"
+    ],
     "contributes": {
       "importers": {
         "import": {
@@ -24,6 +27,24 @@
             "account"
           ],
           "type": "string"
+        },
+        "dashboardViews": {
+          "title": "Dashboard view IDs",
+          "scope": [
+            "user"
+          ],
+          "type": "number",
+          "array": true
+        }
+      },
+      "views": {
+        "tickets": {
+          "title": "Zendesk Tickets",
+          "entryPoint": "src/tickets.js",
+          "host": "page",
+          "location": {
+            "menu": "Work"
+          }
         }
       }
     }

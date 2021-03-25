@@ -1,7 +1,7 @@
 import { settings } from "./extension";
 
 export async function zendeskFetch(path, data = {}, options = {}) {
-  const { method = "GET", useCachedRetry = true } = options;
+  const { method = "GET", authOptions = {} } = options;
 
   const { subdomain } = settings;
 
@@ -10,7 +10,8 @@ export async function zendeskFetch(path, data = {}, options = {}) {
   }
 
   const authData = await aha.auth("zendesk", {
-    useCachedRetry,
+    useCachedRetry: true,
+    ...authOptions,
     parameters: { subdomain },
   });
 
