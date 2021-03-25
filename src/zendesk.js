@@ -26,7 +26,7 @@ export async function zendeskFetch(path, data = {}, options = {}) {
     body: ["GET", "HEAD"].includes(method) ? null : JSON.stringify(data),
   });
 
-  if (response.status != 200) {
+  if (response.status !== 200) {
     throw new Error(`Zendesk request failed: ${response.status} ${response.statusText}: ${await response.text()}`);
   }
 

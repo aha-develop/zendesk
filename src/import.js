@@ -34,10 +34,10 @@ importer.on(
 
 // For a particular filter, when it is dropped-down, provide a list of the possible values.
 importer.on({ action: "filterValues" }, async ({ filter, filters }) => {
-  let values = [];
   switch (filter) {
-    case "view":
+    case "view": {
       const response = await zendeskFetch("/views");
       return response.views.filter(view => view.active).map(view => ({ id: view.id, name: view.title }));
+    }
   }
 });

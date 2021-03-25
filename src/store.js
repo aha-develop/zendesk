@@ -80,7 +80,7 @@ export async function updateSetting(key, mutatorOrValue, scope = "user") {
     }
   `;
 
-  const result = await aha.graphMutate(mutation);
+  await aha.graphMutate(mutation);
   return newValue;
 }
 
