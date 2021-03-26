@@ -26,14 +26,6 @@
             "account"
           ],
           "type": "string"
-        },
-        "dashboardViews": {
-          "title": "Dashboard view IDs",
-          "scope": [
-            "user"
-          ],
-          "type": "number",
-          "array": true
         }
       },
       "views": {

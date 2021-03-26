@@ -1,11 +1,15 @@
 import { EXTENSION_ID, settings } from "./extension";
 import { store } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
+import { getUserPreference, setUserPreference } from "./fields";
 import { zendeskFetch } from "./zendesk";
+
+const DASHBOARD_VIEWS = "DASHBOARD_VIEWS";
 
 export function makeStore() {
   return store({
     configured: false,
-    dashboardViews: settings.dashboardViews || [],
+    loaded: false,
+    dashboardViews: { loading: true, value: [] },
     settings,
     authenticatedUser: null,
     loadingAuth: true,
@@ -19,6 +23,14 @@ export const sharedStore = makeStore();
 export function observable(value) {
   sharedStore._tempObservable = value;
   return sharedStore._tempObservable;
+}
+
+export function loadData() {
+  if (!sharedStore.loaded) {
+    sharedStore.loaded = true;
+    loadViews();
+    loadUserFields();
+  }
 }
 
 export async function checkAuth() {
@@ -39,6 +51,33 @@ export async function authenticateUser(options = {}) {
   } finally {
     sharedStore.loadingAuth = false;
   }
+}
+
+export async function loadUserFields() {
+  sharedStore.dashboardViews.loading = true;
+  sharedStore.dashboardViews.value = (await getUserPreference(DASHBOARD_VIEWS)) || [];
+  sharedStore.dashboardViews.loading = false;
+}
+
+export async function addDashboardView({ id, title }) {
+  const currentViews = sharedStore.dashboardViews.value || [];
+  const existingView = currentViews.find(currentView => currentView.id === id);
+
+  if (!existingView) {
+    const newViews = (sharedStore.dashboardViews.value = [...currentViews, { id, title }]);
+
+    await setUserPreference(DASHBOARD_VIEWS, newViews);
+  }
+}
+
+export async function removeDashboardView(id) {
+  const currentViews = sharedStore.dashboardViews.value || [];
+  const newViews = (sharedStore.dashboardViews.value = observable(
+    currentViews.filter(currentView => currentView.id !== id),
+  ));
+
+  // Optimistic save, return with new value immediately
+  await setUserPreference(DASHBOARD_VIEWS, newViews);
 }
 
 export async function loadViews(force = false) {

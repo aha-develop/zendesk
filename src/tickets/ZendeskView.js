@@ -1,6 +1,6 @@
 import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { sharedStore } from "./store";
+import { sharedStore } from "../store";
 
 const ZendeskView = ({ data, view, onRemove }) => {
   const { settings } = sharedStore;
@@ -8,7 +8,6 @@ const ZendeskView = ({ data, view, onRemove }) => {
 
   return (
     <div>
-      {" "}
       <h3>
         {view.title}
         <button onClick={onRemove}>x</button>

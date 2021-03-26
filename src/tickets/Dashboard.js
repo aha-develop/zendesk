@@ -1,45 +1,54 @@
 import React, { useCallback, useEffect } from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import ZendeskView from "./ZendeskView";
-import { loadViewData, loadViews, observable, sharedStore, updateSetting } from "./store";
+import {
+  addDashboardView,
+  loadData,
+  loadViewData,
+  observable,
+  removeDashboardView,
+  sharedStore,
+  updateSetting,
+} from "../store";
 
 const Dashboard = () => {
   const { dashboardViews, views, viewData } = sharedStore;
 
   useEffect(() => {
-    loadViews();
-  });
-
-  const removeView = useCallback(removeView => {
-    const newValue = (sharedStore.dashboardViews = observable(
-      dashboardViews.filter(dashboardView => dashboardView !== removeView),
-    ));
-
-    updateSetting("dashboardViews", newValue);
+    loadData();
   });
 
   return (
     <div>
       {views.value &&
-        dashboardViews?.map(dashboardView => {
-          const view = views.value.find(view => view.id === dashboardView);
+        !dashboardViews.loading &&
+        dashboardViews.value?.map(dashboardView => {
+          const view = views.value.find(view => view.id === dashboardView.id);
 
           if (!view) {
             return null;
           }
 
-          const data = viewData[dashboardView];
+          const data = viewData[dashboardView.id];
           if (!data || data.loading) {
-            loadViewData(dashboardView);
+            loadViewData(dashboardView.id);
 
             return (
-              <div key={dashboardView}>
-                <h3>Loading…</h3>
+              <div key={dashboardView.id}>
+                <h3>{dashboardView.title}</h3>
+                <p>Loading…</p>
               </div>
             );
           }
 
-          return <ZendeskView key={dashboardView} data={data} view={view} onRemove={() => removeView(dashboardView)} />;
+          return (
+            <ZendeskView
+              key={dashboardView.id}
+              data={data}
+              view={view}
+              onRemove={() => removeDashboardView(dashboardView.id)}
+            />
+          );
         })}
       <h3>Add view</h3>
       <div>
@@ -48,18 +57,22 @@ const Dashboard = () => {
           value={""}
           onChange={event => {
             if (event.target.value) {
-              const view = parseInt(event.target.value, 10);
-              const newValue = (sharedStore.dashboardViews = observable([...dashboardViews, view]));
+              const viewId = parseInt(event.target.value, 10);
+              const view = views.value.find(view => view.id === viewId);
 
-              updateSetting("dashboardViews", newValue);
+              if (view) {
+                addDashboardView(view);
+              }
+
               event.target.value = "";
             }
           }}
         >
           <option value="">{views.loading ? "Loading views…" : "Add a view…"}</option>
           {views.value &&
+            !dashboardViews.loading &&
             views.value
-              .filter(view => !dashboardViews?.includes(view.id))
+              .filter(view => !dashboardViews.value.find(dashboardView => dashboardView.id === view.id))
               .map(view => (
                 <option key={view.id} value={view.id}>
                   {view.title}
