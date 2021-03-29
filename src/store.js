@@ -42,8 +42,6 @@ export async function checkAuth() {
 export async function authenticateUser(options = {}) {
   sharedStore.loadingAuth = true;
   try {
-    // await aha.auth("zendesk", { reAuth: false, useCachedRetry: true });
-    // sharedStore.authenticatedUser = await zendeskFetch("/users/me");
     sharedStore.authenticatedUser = (await zendeskFetch("/users/me", {}, options)).user;
   } catch (e) {
     // Failed, remove authenticatedUser
