@@ -13,6 +13,7 @@ export function makeStore() {
     settings,
     authenticatedUser: null,
     loadingAuth: true,
+    users: {},
     viewData: {},
     views: { loading: true, value: null },
   });
@@ -121,10 +122,19 @@ export async function updateSetting(key, mutatorOrValue, scope = "user") {
   return newValue;
 }
 
+function populateUsers(users) {
+  users.forEach(user => {
+    sharedStore.users[user.id] = user;
+  });
+}
+
 export async function loadViewData(id) {
   if (!(id in sharedStore.viewData)) {
     sharedStore.viewData[id] = { loading: true, data: null };
-    sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`);
+    const data = (sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`));
+
+    populateUsers(data.users);
+
     sharedStore.viewData[id].loading = false;
   }
 }
