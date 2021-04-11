@@ -3,7 +3,7 @@ import { render, unmountComponentAtNode } from "https://cdn.skypack.dev/react-do
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { authenticateUser, checkAuth, sharedStore } from "./store";
 import Dashboard from "./tickets/Dashboard";
-import Styles from "./Styles";
+import Styles from "./styles";
 
 function tickets(container, extensionProps) {
   const App = view(props => {
