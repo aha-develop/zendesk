@@ -18,7 +18,11 @@ function tickets(container, extensionProps) {
             <p>Please update your extension settings to provide a Zendesk subdomain.</p>
 
             <p>
-              <aha-button href={`/settings/account/extensions/${props.extensionId}`} type="primary" target="_blank">
+              <aha-button
+                href={`/settings/account/extensions/${props.extensionId || ""}`}
+                type="primary"
+                target="_blank"
+              >
                 Configure Extension
               </aha-button>
             </p>
@@ -66,14 +70,10 @@ function tickets(container, extensionProps) {
     );
   });
 
-  render(<App {...extensionProps} />, container);
-
   // Load existing auth
   checkAuth();
 
-  return () => {
-    unmountComponentAtNode(container);
-  };
+  return <App {...extensionProps} />;
 }
 
 aha.on("tickets", tickets);
