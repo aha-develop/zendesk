@@ -3,6 +3,8 @@ import { render, unmountComponentAtNode } from "https://cdn.skypack.dev/react-do
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { authenticateUser, checkAuth, sharedStore } from "./store";
 import Dashboard from "./tickets/Dashboard";
+import NotConfigured from "./tickets/NotConfigured";
+import NotAuthenticated from "./tickets/NotAuthenticated";
 import Styles from "./styles";
 
 function tickets(container, extensionProps) {
@@ -12,33 +14,9 @@ function tickets(container, extensionProps) {
     let content;
 
     if (!settings.subdomain) {
-      content = (
-        <div className="sections" style={{ justifyContent: "center" }}>
-          <section style={{ justifyContent: "center", alignItems: "center" }}>
-            <p>Please update your extension settings to provide a Zendesk subdomain.</p>
-
-            <p>
-              <aha-button
-                href={`/settings/account/extensions/${props.extensionId || ""}`}
-                type="primary"
-                target="_blank"
-              >
-                Configure Extension
-              </aha-button>
-            </p>
-          </section>
-        </div>
-      );
+      content = <NotConfigured extensionId={props.extensionId} />;
     } else if (!authenticatedUser) {
-      content = (
-        <div className="sections" style={{ justifyContent: "center" }}>
-          <section style={{ justifyContent: "center", alignItems: "center" }}>
-            <aha-button disabled={loadingAuth || null} onClick={() => authenticateUser()}>
-              {loadingAuth ? "Authenticating" : "Authenticate with Zendesk"}
-            </aha-button>
-          </section>
-        </div>
-      );
+      content = <NotAuthenticated />;
     } else {
       content = <Dashboard />;
     }

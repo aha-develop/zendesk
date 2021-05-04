@@ -22,6 +22,7 @@
       "settings": {
         "subdomain": {
           "title": "Subdomain",
+          "description": "The subdomain for your Zendesk account, where subdomain is https://{subdomain}.zendesk.com/",
           "scope": [
             "account"
           ],

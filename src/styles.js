@@ -4,19 +4,30 @@ const Styles = () => {
   return (
     <style>
       {`
-        * {
-          font-family: Inter, Helvetica, Segoe UI, Arial, sans-serif !important;
+        .page {
+          min-height: 60vh;
+          display: flex;
+          flex-direction: column;
         }
-        .type-icon {
-          color: #3fad33;
-          padding-right: 5px;
-          vertical-align: middle;
+        .page-content {
+          padding: 16px;
         }
-        .icon-button {
-          border: 0;
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
         }
-        .branches {
-          font-size: 85%;
+        .empty-state__content {
+          text-align: center;
+          min-width: 30vw;
+        }
+        .empty-state__content p {
+          color: #333333;
+        }
+        .empty-state__content p {
+          color: #999999;
         }
         .sections {
           background-color: var(--aha-gray-100);
