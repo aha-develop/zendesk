@@ -1,8 +1,8 @@
 {
   "name": "@aha-develop/zendesk",
   "description": "Zendesk integration extension",
-  "version": "0.0.0",
-  "author": "Aha!",
+  "version": "1.0.0",
+  "author": "Aha! (support@aha.io)",
   "repository": {
     "type": "git",
     "url": "https://github.com/aha-develop/zendesk"
