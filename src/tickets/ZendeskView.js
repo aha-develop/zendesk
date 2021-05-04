@@ -1,6 +1,7 @@
 import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { loadViewData, sharedStore } from "../store";
+import ItemImporter from "./ItemImporter";
 
 const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
   const { settings } = sharedStore;
@@ -12,7 +13,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
       <div className="subsection">
         <h3>{dashboardView.title}</h3>
         <div style={{ fontSize: 28 }}>
-          <aha-spinner></aha-spinner>
+          <aha-spinner />
         </div>
       </div>
     );
@@ -36,11 +37,12 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
               <th>Ticket name</th>
               <th>Customer</th>
               <th>Assignee</th>
+              <th>Feature</th>
             </tr>
           </thead>
           <tbody>
             {items.map(item => (
-              <tr key={item.ticket.id}>
+              <tr key={item.ticket.id} className="zendesk-ticket">
                 <td>
                   <a
                     target="_blank"
@@ -52,6 +54,9 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
                 </td>
                 <td>{sharedStore.users[item.requester_id]?.name}</td>
                 <td>{sharedStore.users[item.assignee_id]?.name}</td>
+                <td>
+                  <ItemImporter item={item} />
+                </td>
               </tr>
             ))}
           </tbody>
