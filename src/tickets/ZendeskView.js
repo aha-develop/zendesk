@@ -6,36 +6,19 @@ import ItemImporter from "./ItemImporter";
 const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
   const { settings } = sharedStore;
 
+  let content;
+
   if (!data || data.loading) {
     loadViewData(dashboardView.id);
-
-    return (
-      <section>
-        <h2>
-          {view.title}
-          <aha-button type="text" onClick={onRemove}>
-            <aha-icon icon="fa-regular fa-times" />
-          </aha-button>
-        </h2>
-
-        <div className="subsection" style={{ fontSize: 28 }}>
-          <aha-spinner />
-        </div>
-      </section>
+    content = (
+      <div className="subsection" style={{ fontSize: 28 }}>
+        <aha-spinner />
+      </div>
     );
-  }
+  } else {
+    const items = data?.data?.rows || [];
 
-  const items = data?.data?.rows || [];
-
-  return (
-    <section>
-      <h2>
-        {view.title}
-        <aha-button type="text" onClick={onRemove}>
-          <aha-icon icon="fa-regular fa-times" />
-        </aha-button>
-      </h2>
-
+    content = (
       <div className="subsection">
         {items.length ? (
           <table className="record-table record-table--settings-page">
@@ -72,6 +55,19 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
           <p>There are no tickets in this view.</p>
         )}
       </div>
+    );
+  }
+
+  return (
+    <section>
+      <h2>
+        {view.title}
+        <aha-button type="text" onClick={onRemove}>
+          <aha-icon icon="fa-regular fa-times" />
+        </aha-button>
+      </h2>
+
+      {content}
     </section>
   );
 };
