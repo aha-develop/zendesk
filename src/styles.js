@@ -35,9 +35,13 @@ const Styles = () => {
           padding: 16px;
           gap: 18px;
           flex-wrap: wrap;
+          flex-direction: column;
+        }
+        .sections > * {
+          width: 70vh;
+          min-width: 600px;
         }
         .sections section {
-          padding: 21px 26px;
           background: white;
           border: 1px solid #e1e1e1;
           box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.08);
@@ -45,9 +49,6 @@ const Styles = () => {
           min-height: 100px;
           display: flex;
           flex-direction: column;
-          flex-grow: 5;
-          flex-shrink: 1;
-          max-width: 800px;
         }
         .sections h2 {
           border-bottom: 1px solid var(--aha-gray-400);
@@ -69,8 +70,11 @@ const Styles = () => {
           font-size: 18px;
           line-height: 21px;
         }
-        .subsection + .subsection {
-          margin-top: 2rem;
+        .sections .subsection {
+          padding: 15px 21px;
+        }
+        select {
+          margin: 0;
         }
       `}
     </style>

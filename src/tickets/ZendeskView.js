@@ -10,61 +10,69 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
     loadViewData(dashboardView.id);
 
     return (
-      <div className="subsection">
-        <h3>{dashboardView.title}</h3>
-        <div style={{ fontSize: 28 }}>
+      <section>
+        <h2>
+          {view.title}
+          <aha-button type="text" onClick={onRemove}>
+            <aha-icon icon="fa-regular fa-times" />
+          </aha-button>
+        </h2>
+
+        <div className="subsection" style={{ fontSize: 28 }}>
           <aha-spinner />
         </div>
-      </div>
+      </section>
     );
   }
 
   const items = data?.data?.rows || [];
 
   return (
-    <div className="subsection">
-      <h3>
+    <section>
+      <h2>
         {view.title}
         <aha-button type="text" onClick={onRemove}>
           <aha-icon icon="fa-regular fa-times" />
         </aha-button>
-      </h3>
+      </h2>
 
-      {items.length ? (
-        <table className="record-table record-table--settings-page">
-          <thead>
-            <tr>
-              <th>Ticket name</th>
-              <th>Customer</th>
-              <th>Assignee</th>
-              <th>Feature</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item => (
-              <tr key={item.ticket.id} className="zendesk-ticket">
-                <td>
-                  <a
-                    target="_blank"
-                    href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
-                    rel="noreferrer"
-                  >
-                    {item.subject}
-                  </a>
-                </td>
-                <td>{sharedStore.users[item.requester_id]?.name}</td>
-                <td>{sharedStore.users[item.assignee_id]?.name}</td>
-                <td>
-                  <ItemImporter item={item} />
-                </td>
+      <div className="subsection">
+        {items.length ? (
+          <table className="record-table record-table--settings-page">
+            <thead>
+              <tr>
+                <th>Ticket name</th>
+                <th>Customer</th>
+                <th>Assignee</th>
+                <th>Feature</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>There are no tickets in this view.</p>
-      )}
-    </div>
+            </thead>
+            <tbody>
+              {items.map(item => (
+                <tr key={item.ticket.id} className="zendesk-ticket">
+                  <td>
+                    <a
+                      target="_blank"
+                      href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
+                      rel="noreferrer"
+                    >
+                      {item.subject}
+                    </a>
+                  </td>
+                  <td>{sharedStore.users[item.requester_id]?.name}</td>
+                  <td>{sharedStore.users[item.assignee_id]?.name}</td>
+                  <td>
+                    <ItemImporter item={item} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>There are no tickets in this view.</p>
+        )}
+      </div>
+    </section>
   );
 };
 

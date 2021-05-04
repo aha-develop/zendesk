@@ -31,13 +31,17 @@ const ItemImporter = ({ item }) => {
     );
   } else if (importing[id]) {
     return (
-      <aha-button disabled>
+      <aha-button disabled size="small">
         <aha-spinner />
         &nbsp;&nbsp;Importing…
       </aha-button>
     );
   } else {
-    return <aha-button onClick={() => importItem(item)}>Promote to feature</aha-button>;
+    return (
+      <aha-button size="small" onClick={() => importItem(item)}>
+        Promote to feature
+      </aha-button>
+    );
   }
 };
 
