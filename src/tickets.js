@@ -7,14 +7,14 @@ import NotConfigured from "./tickets/NotConfigured";
 import NotAuthenticated from "./tickets/NotAuthenticated";
 import Styles from "./styles";
 
-function tickets(container, extensionProps) {
-  const App = view(props => {
+function tickets(extensionProps, { identifier }) {
+  const App = view(() => {
     const { authenticatedUser, loadingAuth, settings } = sharedStore;
 
     let content;
 
     if (!settings.subdomain) {
-      content = <NotConfigured extensionId={props.extensionId} />;
+      content = <NotConfigured identifier={identifier} />;
     } else if (!authenticatedUser) {
       content = <NotAuthenticated />;
     } else {
@@ -51,7 +51,7 @@ function tickets(container, extensionProps) {
   // Load existing auth
   checkAuth();
 
-  return <App {...extensionProps} />;
+  return <App />;
 }
 
 aha.on("tickets", tickets);
