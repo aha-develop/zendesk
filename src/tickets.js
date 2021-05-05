@@ -22,10 +22,10 @@ function tickets(extensionProps, { identifier }) {
     }
 
     return (
-      <div>
+      <div className="sidebar-layout sidebar-layout--scroll">
         <Styles />
 
-        <div className="page">
+        <div className="page sidebar-layout__content">
           <div className="page-nav">
             <div className="page-nav__row  page-nav__row--justify-left page-nav__row--align-top">
               <div className="page-nav__cell page-nav__cell--grow-1">

@@ -8,6 +8,7 @@ const Styles = () => {
           min-height: 60vh;
           display: flex;
           flex-direction: column;
+          padding: 0;
         }
         .page-content {
           padding: 16px;
@@ -23,6 +24,10 @@ const Styles = () => {
           text-align: center;
           min-width: 30vw;
         }
+        section.empty-state__content {
+          padding: 4rem;
+          margin-top: 10rem;
+        }
         .empty-state__content p {
           color: #333333;
         }
@@ -36,6 +41,7 @@ const Styles = () => {
           gap: 18px;
           flex-wrap: wrap;
           flex-direction: column;
+          flex: 1;
         }
         .sections > * {
           width: 70vh;
