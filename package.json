@@ -15,7 +15,7 @@
     "contributes": {
       "importers": {
         "import": {
-          "title": "Zendesk tickets",
+          "title": "Ticket importer",
           "entryPoint": "src/import.js"
         }
       },
@@ -31,7 +31,7 @@
       },
       "views": {
         "tickets": {
-          "title": "Zendesk Tickets",
+          "title": "Zendesk dashboard",
           "entryPoint": "src/tickets.js",
           "host": "page",
           "location": {
