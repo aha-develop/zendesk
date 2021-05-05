@@ -16,8 +16,12 @@ const Dashboard = () => {
 
   if (views.loading || dashboardViews.loading) {
     return (
-      <div style={{ fontSize: 36, justifyContent: "center", alignItems: "center" }}>
-        <aha-spinner />
+      <div className="page-content empty-state">
+        <div className="empty-state__content">
+          <div style={{ fontSize: 36, justifyContent: "center", alignItems: "center" }}>
+            <aha-spinner />
+          </div>
+        </div>
       </div>
     );
   } else if (dashboardViews.value.length === 0) {

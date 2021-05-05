@@ -50,9 +50,11 @@ const Styles = () => {
           display: flex;
           flex-direction: column;
         }
-        .sections h2 {
+        .sections .section__title {
           border-bottom: 1px solid var(--aha-gray-400);
           padding: 15px 21px;
+        }
+        .sections h2 {
           margin: 0;
           font-style: normal;
           font-weight: 600;

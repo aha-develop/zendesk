@@ -11,7 +11,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
   if (!data || data.loading) {
     loadViewData(dashboardView.id);
     content = (
-      <div className="subsection" style={{ fontSize: 28 }}>
+      <div className="subsection" style={{ fontSize: 28, textAlign: "center" }}>
         <aha-spinner />
       </div>
     );
@@ -60,12 +60,20 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
 
   return (
     <section>
-      <h2>
-        {view.title}
-        <aha-button type="text" onClick={onRemove}>
-          <aha-icon icon="fa-regular fa-times" />
-        </aha-button>
-      </h2>
+      <div className="section__title">
+        <aha-flex align-items="center" justify-content="space-between">
+          <h2>{view.title}</h2>
+
+          <aha-menu>
+            <aha-button slot="button" type="attribute" size="small">
+              <aha-icon icon="fa-solid fa-ellipsis"></aha-icon>
+            </aha-button>
+            <aha-button type="text" onClick={onRemove}>
+              Remove
+            </aha-button>
+          </aha-menu>
+        </aha-flex>
+      </div>
 
       {content}
     </section>
