@@ -37,7 +37,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
                     <a
                       target="_blank"
                       href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
-                      rel="noreferrer"
+                      rel="noreferrer noopener"
                     >
                       {item.subject}
                     </a>
