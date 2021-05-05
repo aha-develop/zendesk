@@ -15,13 +15,14 @@
     "contributes": {
       "importers": {
         "import": {
-          "title": "Zendesk tickets",
+          "title": "Ticket importer",
           "entryPoint": "src/import.js"
         }
       },
       "settings": {
         "subdomain": {
           "title": "Subdomain",
+          "description": "The subdomain for your Zendesk account, where subdomain is https://{subdomain}.zendesk.com/",
           "scope": [
             "account"
           ],
@@ -30,7 +31,7 @@
       },
       "views": {
         "tickets": {
-          "title": "Zendesk Tickets",
+          "title": "Zendesk dashboard",
           "entryPoint": "src/tickets.js",
           "host": "page",
           "location": {

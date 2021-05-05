@@ -1,7 +1,7 @@
-import { EXTENSION_ID, settings } from "./extension";
+import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
 import { store } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { getUserPreference, setUserPreference } from "./fields";
-import { zendeskFetch } from "./zendesk";
+import { descriptionForItem, zendeskFetch } from "./zendesk";
 
 const DASHBOARD_VIEWS = "DASHBOARD_VIEWS";
 
@@ -12,7 +12,11 @@ export function makeStore() {
     dashboardViews: { loading: true, value: [] },
     settings,
     authenticatedUser: null,
+    importedItems: { loading: true, value: {} },
+    importing: {},
     loadingAuth: true,
+    refreshing: false,
+    users: {},
     viewData: {},
     views: { loading: true, value: null },
   });
@@ -30,6 +34,7 @@ export function loadData() {
     sharedStore.loaded = true;
     loadViews();
     loadUserFields();
+    loadImportedItems();
   }
 }
 
@@ -57,6 +62,34 @@ export async function loadUserFields() {
   sharedStore.dashboardViews.loading = false;
 }
 
+export async function loadImportedItems() {
+  sharedStore.importedItems.loading = true;
+  const { extensionFields } = await aha.graphQuery(`
+{
+  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
+    nodes {
+      value
+      extensionFieldable {
+        ... on Feature {
+          referenceNum
+          name
+        }
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`);
+
+  sharedStore.importedItems.value = extensionFields.nodes.reduce((acc, extensionField) => {
+    acc[extensionField.value] = extensionField.extensionFieldable;
+    return acc;
+  }, {});
+
+  sharedStore.importedItems.loading = false;
+}
+
 export async function addDashboardView({ id, title }) {
   const currentViews = sharedStore.dashboardViews.value || [];
   const existingView = currentViews.find(currentView => currentView.id === id);
@@ -76,6 +109,26 @@ export async function removeDashboardView(id) {
 
   // Optimistic save, return with new value immediately
   await setUserPreference(DASHBOARD_VIEWS, newViews);
+}
+
+export async function importItem(item) {
+  const { id } = item.ticket;
+  sharedStore.importing[id] = true;
+
+  const feature = new window.aha.models.Feature({
+    name: item.subject,
+    description: descriptionForItem(item),
+    team: { id: aha.project.id },
+  });
+
+  await feature.save({ query: feature.query.select("referenceNum") });
+
+  await feature.setExtensionField(EXTENSION_ID, TICKET_FIELD, item.ticket.id);
+
+  sharedStore.importedItems.value[id] = feature;
+  sharedStore.importing[id] = false;
+
+  return feature;
 }
 
 export async function loadViews(force = false) {
@@ -121,10 +174,28 @@ export async function updateSetting(key, mutatorOrValue, scope = "user") {
   return newValue;
 }
 
-export async function loadViewData(id) {
-  if (!(id in sharedStore.viewData)) {
+function populateUsers(users) {
+  users.forEach(user => {
+    sharedStore.users[user.id] = user;
+  });
+}
+
+export async function loadViewData(id, options = {}) {
+  const { force = false } = options;
+  if (force || !(id in sharedStore.viewData)) {
     sharedStore.viewData[id] = { loading: true, data: null };
-    sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`);
+    const data = (sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`));
+
+    populateUsers(data.users);
+
     sharedStore.viewData[id].loading = false;
   }
+}
+
+export async function refreshData() {
+  sharedStore.refreshing = true;
+  await Promise.all(
+    sharedStore.dashboardViews.value.map(dashboardView => loadViewData(dashboardView.id, { force: true })),
+  );
+  sharedStore.refreshing = false;
 }

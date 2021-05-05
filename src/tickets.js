@@ -1,38 +1,57 @@
 import React from "https://cdn.skypack.dev/react";
 import { render, unmountComponentAtNode } from "https://cdn.skypack.dev/react-dom";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { checkAuth, sharedStore } from "./store";
-import Configure from "./tickets/Configure";
+import { authenticateUser, checkAuth, sharedStore } from "./store";
 import Dashboard from "./tickets/Dashboard";
+import NotConfigured from "./tickets/NotConfigured";
+import NotAuthenticated from "./tickets/NotAuthenticated";
+import Styles from "./styles";
 
-function tickets(container, props) {
-  const App = view(props => {
-    const { authenticatedUser, settings } = sharedStore;
-    let Component = Configure;
+function tickets(extensionProps, { identifier }) {
+  const App = view(() => {
+    const { authenticatedUser, loadingAuth, settings } = sharedStore;
 
-    if (authenticatedUser && settings.subdomain) {
-      Component = Dashboard;
+    let content;
+
+    if (!settings.subdomain) {
+      content = <NotConfigured identifier={identifier} />;
+    } else if (!authenticatedUser) {
+      content = <NotAuthenticated />;
+    } else {
+      content = <Dashboard />;
     }
 
     return (
-      <div>
-        <h1>Zendesk</h1>
+      <div className="sidebar-layout sidebar-layout--scroll">
+        <Styles />
 
-        {authenticatedUser && <div>Authenticated as {authenticatedUser.name}</div>}
-
-        <Component />
+        <div className="page sidebar-layout__content">
+          <div className="page-nav">
+            <div className="page-nav__row  page-nav__row--justify-left page-nav__row--align-top">
+              <div className="page-nav__cell page-nav__cell--grow-1">
+                <h1>Zendesk Tickets</h1>
+              </div>
+              {authenticatedUser && (
+                <div className="page-nav__cell">
+                  <div style={{ textAlign: "right" }}>
+                    <strong>Authenticated as</strong>
+                    <br />
+                    {authenticatedUser.name}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          {content}
+        </div>
       </div>
     );
   });
 
-  render(<App {...props} />, container);
-
   // Load existing auth
   checkAuth();
 
-  return () => {
-    unmountComponentAtNode(container);
-  };
+  return <App />;
 }
 
 aha.on("tickets", tickets);
