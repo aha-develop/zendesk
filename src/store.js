@@ -15,6 +15,7 @@ export function makeStore() {
     importedItems: { loading: true, value: {} },
     importing: {},
     loadingAuth: true,
+    refreshing: false,
     users: {},
     viewData: {},
     views: { loading: true, value: null },
@@ -179,8 +180,9 @@ function populateUsers(users) {
   });
 }
 
-export async function loadViewData(id) {
-  if (!(id in sharedStore.viewData)) {
+export async function loadViewData(id, options = {}) {
+  const { force = false } = options;
+  if (force || !(id in sharedStore.viewData)) {
     sharedStore.viewData[id] = { loading: true, data: null };
     const data = (sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`));
 
@@ -188,4 +190,12 @@ export async function loadViewData(id) {
 
     sharedStore.viewData[id].loading = false;
   }
+}
+
+export async function refreshData() {
+  sharedStore.refreshing = true;
+  await Promise.all(
+    sharedStore.dashboardViews.value.map(dashboardView => loadViewData(dashboardView.id, { force: true })),
+  );
+  sharedStore.refreshing = false;
 }

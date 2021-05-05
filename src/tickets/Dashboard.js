@@ -3,10 +3,10 @@ import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import AddView from "./AddView";
 import EmptyState from "./EmptyState";
 import ZendeskView from "./ZendeskView";
-import { loadData, removeDashboardView, sharedStore } from "../store";
+import { loadData, refreshData, removeDashboardView, sharedStore } from "../store";
 
 const Dashboard = () => {
-  const { dashboardViews, views, viewData } = sharedStore;
+  const { dashboardViews, refreshing, views, viewData } = sharedStore;
 
   useEffect(() => {
     loadData();
@@ -29,11 +29,20 @@ const Dashboard = () => {
   } else {
     return (
       <div className="sections" style={{ alignItems: "center" }}>
-        <div style={{ justifyContent: "flex-end", display: "flex" }}>
+        <aha-flex gap="1rem" align-items="center" justify-content="space-between">
+          <aha-button disabled={refreshing || null} onClick={refreshData}>
+            {refreshing ? (
+              <span>
+                <aha-spinner /> Refreshing…
+              </span>
+            ) : (
+              "Refresh views"
+            )}
+          </aha-button>
           <AddView>
             <h5 style={{ margin: 0 }}>Zendesk views</h5>
           </AddView>
-        </div>
+        </aha-flex>
 
         {dashboardViews.value.map(dashboardView => {
           const view = views.value.find(view => view.id === dashboardView.id);
