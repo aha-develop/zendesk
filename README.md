@@ -2,6 +2,10 @@
 
 This is an extension for [Aha! Develop](https://www.aha.io/develop) providing integration with Zendesk.
 
+## Demo
+
+https://user-images.githubusercontent.com/125077/117083988-3162d580-ad03-11eb-9d5f-e571562e6ffb.mov
+
 ## Working on the extension
 
 Install `aha-cli`:
