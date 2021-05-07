@@ -15,7 +15,7 @@
     "contributes": {
       "importers": {
         "import": {
-          "title": "Ticket importer",
+          "title": "Zendesk",
           "entryPoint": "src/import.js"
         }
       },

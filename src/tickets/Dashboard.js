@@ -29,15 +29,12 @@ const Dashboard = () => {
   } else {
     return (
       <div className="sections" style={{ alignItems: "center" }}>
-        <aha-flex gap="1rem" align-items="center" justify-content="space-between">
-          <aha-button disabled={refreshing || null} onClick={refreshData}>
-            {refreshing ? (
-              <span>
-                <aha-spinner /> Refreshing…
-              </span>
-            ) : (
-              "Refresh views"
-            )}
+        <aha-flex gap="1rem" align-items="baseline" justify-content="space-between">
+          <aha-button type="link" loading={refreshing || null} onClick={refreshData}>
+            <span slot="prefix">
+              {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
+            </span>
+            <span style={{ marginLeft: ".75ch" }}>{refreshing ? "Refreshing…" : "Refresh views"}</span>
           </aha-button>
           <AddView>
             <h5 style={{ margin: 0 }}>Zendesk views</h5>
