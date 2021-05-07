@@ -6,6 +6,12 @@ This is an extension for [Aha! Develop](https://www.aha.io/develop) providing in
 
 https://user-images.githubusercontent.com/125077/117083988-3162d580-ad03-11eb-9d5f-e571562e6ffb.mov
 
+## Installing the extension
+
+**Note: In order to install an extension into your Aha! Develop account, you must be an account administrator.**
+
+Install the Zendesk extension by clicking [here](https://secure.aha.io/settings/account/extensions/install?url=https%3A%2F%2Fsecure.aha.io%2Fextensions%2Faha-develop.zendesk.gz).
+
 ## Working on the extension
 
 Install `aha-cli`:
