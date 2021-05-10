@@ -13,6 +13,12 @@
       "https://*.zendesk.com"
     ],
     "contributes": {
+      "commands": {
+        "addLink": {
+          "entryPoint": "src/commands/addLink.js",
+          "title": "Zendesk: Link ticket to record"
+        }
+      },
       "importers": {
         "import": {
           "title": "Zendesk",
@@ -42,6 +48,7 @@
     }
   },
   "devDependencies": {
+    "aha-cli": "^1.9.2",
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-standard": "^16.0.2",
@@ -54,5 +61,8 @@
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "@aha-app/aha-develop-react": "^1.0.5"
   }
 }

@@ -123,12 +123,16 @@ export async function importItem(item) {
 
   await feature.save({ query: feature.query.select("referenceNum") });
 
-  await feature.setExtensionField(EXTENSION_ID, TICKET_FIELD, item.ticket.id);
+  await linkTicketToRecord(item.ticket.id, feature);
 
-  sharedStore.importedItems.value[id] = feature;
   sharedStore.importing[id] = false;
 
   return feature;
+}
+
+export async function linkTicketToRecord(ticketId, record) {
+  await record.setExtensionField(EXTENSION_ID, TICKET_FIELD, ticketId);
+  sharedStore.importedItems.value[ticketId] = record;
 }
 
 export async function loadViews(force = false) {

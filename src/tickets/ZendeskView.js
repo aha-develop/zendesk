@@ -2,10 +2,37 @@ import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { loadViewData, sharedStore } from "../store";
 import ItemImporter from "./ItemImporter";
+import { EXTENSION_ID } from "../extension";
 
-const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
+const ZendeskRow = ({ item }) => {
   const { settings } = sharedStore;
 
+  const linkToRecord = () => {
+    aha.command(`${EXTENSION_ID}.addLink`, { ticketUrl: item.ticket.url });
+  };
+
+  return (
+    <tr key={item.ticket.id} className="zendesk-ticket">
+      <td>
+        <a
+          target="_blank"
+          href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
+          rel="noreferrer noopener"
+        >
+          {item.subject}
+        </a>
+      </td>
+      <td>{sharedStore.users[item.requester_id]?.name}</td>
+      <td>{sharedStore.users[item.assignee_id]?.name}</td>
+      <td>
+        <ItemImporter item={item} />
+        <aha-button size="small" onClick={linkToRecord}>Link to record</aha-button>
+      </td>
+    </tr>
+  );
+};
+
+const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
   let content;
 
   if (!data || data.loading) {
@@ -32,22 +59,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
             </thead>
             <tbody>
               {items.map(item => (
-                <tr key={item.ticket.id} className="zendesk-ticket">
-                  <td>
-                    <a
-                      target="_blank"
-                      href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
-                      rel="noreferrer noopener"
-                    >
-                      {item.subject}
-                    </a>
-                  </td>
-                  <td>{sharedStore.users[item.requester_id]?.name}</td>
-                  <td>{sharedStore.users[item.assignee_id]?.name}</td>
-                  <td>
-                    <ItemImporter item={item} />
-                  </td>
-                </tr>
+                <ZendeskRow key={item.ticket.id} item={item} />
               ))}
             </tbody>
           </table>
