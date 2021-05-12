@@ -3,6 +3,38 @@ import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { loadViewData, sharedStore } from "../store";
 import ItemImporter from "./ItemImporter";
 
+const ZendeskRow = ({ item }) => {
+  const onOpen = event => {
+    event.preventDefault();
+
+    setTimeout(() => {
+      window["require"]("javascripts/drawer").showUrl(
+        `/extensions/drawers/aha-develop/zendesk/ticket?ticket_id=${item.ticket.id}`,
+      );
+    }, 0);
+  };
+
+  return (
+    <tr className="zendesk-ticket">
+      <td>
+        <a
+          onClick={onOpen}
+          // target="_blank"
+          // href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
+          // rel="noreferrer noopener"
+        >
+          {item.subject}
+        </a>
+      </td>
+      <td>{sharedStore.users[item.requester_id]?.name}</td>
+      <td>{sharedStore.users[item.assignee_id]?.name}</td>
+      <td>
+        <ItemImporter item={item} />
+      </td>
+    </tr>
+  );
+};
+
 const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
   const { settings } = sharedStore;
 
@@ -32,22 +64,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
             </thead>
             <tbody>
               {items.map(item => (
-                <tr key={item.ticket.id} className="zendesk-ticket">
-                  <td>
-                    <a
-                      target="_blank"
-                      href={`https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
-                      rel="noreferrer noopener"
-                    >
-                      {item.subject}
-                    </a>
-                  </td>
-                  <td>{sharedStore.users[item.requester_id]?.name}</td>
-                  <td>{sharedStore.users[item.assignee_id]?.name}</td>
-                  <td>
-                    <ItemImporter item={item} />
-                  </td>
-                </tr>
+                <ZendeskRow item={item} key={item.ticket.id} />
               ))}
             </tbody>
           </table>
