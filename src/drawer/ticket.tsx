@@ -29,7 +29,7 @@ const Title: React.FC<TicketProps> = ({ ticket }) => {
 const Nav: React.FC<TicketProps> = ({ ticket }) => {
   const onClickClose = event => {
     event.preventDefault();
-    window["require"]("javascripts/drawer").hide();
+    aha.drawer.hide();
   };
 
   return (
