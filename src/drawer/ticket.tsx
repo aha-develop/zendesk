@@ -102,7 +102,7 @@ const Drawer = ({ ticketId, subdomain }) => {
   );
 };
 
-aha.on("ticket", ({ parameters: { ticket_id } }, { settings }) => {
+aha.on("ticket", ({ drawerProps: { ticket_id } }, { settings }) => {
   return (
     <>
       <Style />

@@ -2,16 +2,13 @@ import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { loadViewData, sharedStore } from "../store";
 import ItemImporter from "./ItemImporter";
+import { EXTENSION_ID } from "../extension";
 
 const ZendeskRow = ({ item }) => {
   const onOpen = event => {
     event.preventDefault();
 
-    setTimeout(() => {
-      window["require"]("javascripts/drawer").showUrl(
-        `/extensions/drawers/aha-develop/zendesk/ticket?ticket_id=${item.ticket.id}`,
-      );
-    }, 0);
+    aha.drawer.showExtension(EXTENSION_ID, "ticket", { ticket_id: item.ticket.id });
   };
 
   return (
