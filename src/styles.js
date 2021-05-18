@@ -1,9 +1,13 @@
 import React from "react";
 
+function css(strings) {
+  return strings.join("");
+}
+
 const Styles = () => {
   return (
     <style>
-      {`
+      {css`
         .page {
           min-height: 60vh;
           display: flex;
@@ -83,6 +87,29 @@ const Styles = () => {
         }
         select {
           margin: 0;
+        }
+
+        .zendesk__ticket__details {
+          margin-bottom: 20px !important;
+        }
+
+        .zendesk__ticket .comments ul.list {
+          margin-left: 0px !important;
+        }
+
+        .zendesk__comments .comments__body {
+          padding: 13px 13px 5px 13px !important;
+        }
+
+        .comments__body blockquote {
+          border-left: 5px solid var(--aha-gray-600);
+          padding-left: 10px;
+          margin-left: 5px;
+        }
+
+        .zendesk__comments .comment__private .comments__body {
+          background-color: #fff3cc !important;
+          border: 1px solid #efdaa3;
         }
       `}
     </style>

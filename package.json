@@ -37,11 +37,21 @@
           "location": {
             "menu": "Work"
           }
+        },
+        "ticket": {
+          "title": "Zendesk Ticket",
+          "entryPoint": "src/drawer/ticket.tsx",
+          "host": "drawer",
+          "location": {
+            "menu": "Work"
+          }
         }
       }
     }
   },
   "devDependencies": {
+    "@types/react": "^17.0.5",
+    "aha-cli": "^1.9.5",
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-standard": "^16.0.2",
@@ -54,5 +64,8 @@
     "eslint-plugin-react": "^7.23.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "react-markdown": "^6.0.2"
   }
 }

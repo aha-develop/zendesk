@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "noEmit": true,
+    "lib": ["DOM", "ES6", "ES2019"],
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "module": "ES6",
+    "moduleResolution": "node",
+    "target": "ES6"
+  },
+  "include": ["node_modules/aha-cli/aha.d.ts", "src/**/*.ts*"]
+
+}
