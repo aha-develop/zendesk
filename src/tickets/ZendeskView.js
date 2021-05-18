@@ -8,7 +8,7 @@ const ZendeskRow = ({ item }) => {
   const onOpen = event => {
     event.preventDefault();
 
-    aha.drawer.showExtension(EXTENSION_ID, "ticket", { ticket_id: item.ticket.id });
+    aha.drawer.showExtension(EXTENSION_ID, "ticket", { ticketId: item.ticket.id });
   };
 
   return (

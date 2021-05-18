@@ -102,11 +102,13 @@ const Drawer = ({ ticketId, subdomain }) => {
   );
 };
 
-aha.on("ticket", ({ drawerProps: { ticket_id } }, { settings }) => {
+aha.on("ticket", ({}, { settings }) => {
+  const { ticketId } = aha.drawer.getProps();
+
   return (
     <>
       <Style />
-      <Drawer ticketId={ticket_id} subdomain={settings.get("subdomain")} />
+      <Drawer ticketId={ticketId} subdomain={settings.get("subdomain")} />
     </>
   );
 });
