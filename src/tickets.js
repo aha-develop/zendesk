@@ -3,8 +3,8 @@ import { render, unmountComponentAtNode } from "https://cdn.skypack.dev/react-do
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { authenticateUser, checkAuth, sharedStore } from "./store";
 import Dashboard from "./tickets/Dashboard";
-import NotConfigured from "./tickets/NotConfigured";
-import NotAuthenticated from "./tickets/NotAuthenticated";
+import NotConfigured from "./components/NotConfigured";
+import NotAuthenticated from "./components/NotAuthenticated";
 import Styles from "./styles";
 
 function tickets(extensionProps, { identifier }) {

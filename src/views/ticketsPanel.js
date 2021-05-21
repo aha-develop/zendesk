@@ -3,8 +3,8 @@ import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
 import { EXTENSION_ID, TICKET_FIELD, settings } from "../extension";
 import { zendeskFetch } from "../zendesk";
 import { authenticateUser, checkAuth, loadData, loadViewData, sharedStore } from "../store";
-import NotConfigured from "../tickets/NotConfigured";
-import NotAuthenticated from "../tickets/NotAuthenticated";
+import NotConfigured from "../components/NotConfigured";
+import NotAuthenticated from "../components/NotAuthenticated";
 import TicketsTable from "../components/TicketsTable";
 
 const panel = aha.getPanel("aha-develop.zendesk", "ticketsPanel", { name: "Zendesk tickets" });
