@@ -37,6 +37,11 @@
           "location": {
             "menu": "Work"
           }
+        },
+        "ticketsPanel": {
+          "title": "Zendesk tickets",
+          "entryPoint": "src/views/ticketsPanel.js",
+          "host": "panel"
         }
       }
     }
