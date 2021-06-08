@@ -10,7 +10,7 @@ const TicketLink: React.FC<TicketProps & HTMLProps<any>> = props => {
   const url = ticket.url.replace("/api/v2", "/agent").replace(".json", "");
 
   return (
-    <a {...props} href={url} rel="noreferrer noopener" target="_blank">
+    <a {...props} href={aha.sanitizeUrl(url)} rel="noreferrer noopener" target="_blank">
       {props.children || ticket.subject}
     </a>
   );
