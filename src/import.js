@@ -3,6 +3,16 @@ import { zendeskFetch, descriptionForItem } from "./zendesk";
 
 const importer = aha.getImporter("aha-develop.zendesk.import");
 
+importer.on(
+  {
+    action: "auth",
+  },
+  async () => {
+    // Trigger API request to force authentication
+    await zendeskFetch("/users/me");
+  },
+);
+
 // Return the available filters
 importer.on(
   {
