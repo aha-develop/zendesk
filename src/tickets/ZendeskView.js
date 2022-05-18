@@ -32,12 +32,16 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
           <h2>{view.title}</h2>
 
           <aha-menu>
-            <aha-button slot="button" type="attribute" size="small">
+            <aha-button slot="control" kind="attribute" size="small">
               <aha-icon icon="fa-solid fa-ellipsis"></aha-icon>
             </aha-button>
-            <aha-button type="text" onClick={onRemove}>
-              Remove
-            </aha-button>
+            <aha-menu-content>
+              <aha-menu-item>
+                <aha-button kind="text" onClick={onRemove}>
+                  Remove
+                </aha-button>
+              </aha-menu-item>
+            </aha-menu-content>
           </aha-menu>
         </aha-flex>
       </div>

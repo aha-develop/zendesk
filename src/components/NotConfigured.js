@@ -7,7 +7,7 @@ const NotConfigured = ({ identifier }) => {
       <div className="empty-state__content">
         <h3>Add Zendesk subdomain</h3>
         <p>Please update your extension settings to provide a Zendesk subdomain.</p>
-        <aha-button href={`/settings/account/extensions/${identifier}`} type="primary" target="_blank">
+        <aha-button href={`/settings/account/extensions/${identifier}`} kind="primary" target="_blank">
           Configure Extension
         </aha-button>
       </div>
