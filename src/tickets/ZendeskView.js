@@ -32,7 +32,7 @@ const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
           <h2>{view.title}</h2>
 
           <aha-menu>
-            <aha-button slot="control" kind="attribute" size="small">
+            <aha-button slot="control" kind="secondary" size="small">
               <aha-icon icon="fa-solid fa-ellipsis"></aha-icon>
             </aha-button>
             <aha-menu-content>
