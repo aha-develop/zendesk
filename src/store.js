@@ -117,9 +117,10 @@ export async function importItem(item) {
 
   const feature = new window.aha.models.Feature({
     name: item.subject,
-    description: descriptionForItem(item),
     team: { id: aha.project.id },
   });
+
+  feature.description = descriptionForItem(item);
 
   await feature.save({ query: feature.query.select("referenceNum") });
 
