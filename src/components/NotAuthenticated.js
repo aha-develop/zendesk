@@ -10,7 +10,7 @@ const NotAuthenticated = ({ extensionId }) => {
       <div className="empty-state__content">
         <h3>Sign in with Zendesk</h3>
         <p>Authenticate with Zendesk to get started.</p>
-        <aha-button disabled={loadingAuth || null} type="primary" onClick={() => authenticateUser()}>
+        <aha-button disabled={loadingAuth || null} kind="primary" onClick={() => authenticateUser()}>
           {loadingAuth ? "Authenticating…" : "Authenticate with Zendesk"}
         </aha-button>
       </div>

@@ -30,7 +30,7 @@ const Dashboard = () => {
     return (
       <div className="sections" style={{ alignItems: "center" }}>
         <aha-flex gap="1rem" align-items="baseline" justify-content="space-between">
-          <aha-button type="link" loading={refreshing || null} onClick={refreshData}>
+          <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
             <span slot="prefix">
               {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
             </span>
