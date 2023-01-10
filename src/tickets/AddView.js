@@ -1,12 +1,10 @@
 import React, { useRef } from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import EmptyState from "./EmptyState";
-import ZendeskView from "./ZendeskView";
 import { addDashboardView, sharedStore } from "../store";
 
 const AddView = ({ children }) => {
   const selectRef = useRef();
-  const { dashboardViews, views, viewData } = sharedStore;
+  const { dashboardViews, views } = sharedStore;
 
   return (
     <aha-flex gap="1rem" align-items="center" justify-content="center">

@@ -1,7 +1,6 @@
 import React from "https://cdn.skypack.dev/react";
-import { render, unmountComponentAtNode } from "https://cdn.skypack.dev/react-dom";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { authenticateUser, checkAuth, sharedStore } from "./store";
+import { checkAuth, sharedStore } from "./store";
 import Dashboard from "./tickets/Dashboard";
 import NotConfigured from "./components/NotConfigured";
 import NotAuthenticated from "./components/NotAuthenticated";
@@ -9,7 +8,7 @@ import Styles from "./styles";
 
 function tickets(extensionProps, { identifier }) {
   const App = view(() => {
-    const { authenticatedUser, loadingAuth, settings } = sharedStore;
+    const { authenticatedUser, settings } = sharedStore;
 
     let content;
 
