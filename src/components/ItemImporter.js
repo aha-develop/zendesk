@@ -1,6 +1,6 @@
 import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { importItem, loadViewData, sharedStore } from "../store";
+import { importItem, sharedStore } from "../store";
 
 const AhaDrawer = window.require("javascripts/drawer");
 

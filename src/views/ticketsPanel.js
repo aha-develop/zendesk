@@ -1,8 +1,7 @@
 import React from "https://cdn.skypack.dev/react";
 import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { EXTENSION_ID, TICKET_FIELD, settings } from "../extension";
 import { zendeskFetch } from "../zendesk";
-import { authenticateUser, checkAuth, loadData, loadViewData, sharedStore } from "../store";
+import { checkAuth, loadData, loadViewData, sharedStore } from "../store";
 import NotConfigured from "../components/NotConfigured";
 import NotAuthenticated from "../components/NotAuthenticated";
 import TicketsTable from "../components/TicketsTable";
@@ -21,9 +20,7 @@ const Tickets = view(({ data, view }) => {
 
 const TicketsPanel = view(({ identifier, panel }) => {
   const panelSettings = panel.settings;
-  const { authenticatedUser, loadingAuth, settings, views, viewData } = sharedStore;
-
-  let content;
+  const { authenticatedUser, settings, views, viewData } = sharedStore;
 
   if (!settings.subdomain) {
     return <NotConfigured identifier={identifier} />;

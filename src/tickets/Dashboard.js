@@ -12,8 +12,6 @@ const Dashboard = () => {
     loadData();
   });
 
-  let content;
-
   if (views.loading || dashboardViews.loading) {
     return (
       <div className="page-content empty-state">

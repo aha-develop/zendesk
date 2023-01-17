@@ -4,8 +4,6 @@ import { loadViewData, sharedStore } from "../store";
 import TicketsTable from "../components/TicketsTable";
 
 const ZendeskView = ({ dashboardView, data, view, onRemove }) => {
-  const { settings } = sharedStore;
-
   let content;
 
   if (!data || data.loading) {
