@@ -63,10 +63,13 @@ export async function loadUserFields() {
   sharedStore.dashboardViews.loading = false;
 }
 
-async function fetchExtensionFieldsPage(page) {
+async function fetchExtensionFields({ page, per, value } = {}) {
+  const pagination = page ? `page: ${page}, per: ${per}, ` : '';
+  const valueFilter = value ? `, value: "${value}"` : '';
+
   const { extensionFields } = await aha.graphQuery(`
 {
-  extensionFields(page: ${page}, per: 500, filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
+  extensionFields(${pagination}filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"${valueFilter}}) {
     nodes {
       value
       extensionFieldable {
@@ -92,7 +95,7 @@ export async function loadImportedItems({ silent = false } = {}) {
   let nodes;
 
   do {
-    nodes = await fetchExtensionFieldsPage(page);
+    nodes = await fetchExtensionFields({ page, per: 500 });
     allNodes = allNodes.concat(nodes);
     page++;
   } while (nodes.length === 500);
@@ -134,24 +137,11 @@ export async function importItem(item) {
   sharedStore.importing[id] = true;
 
   // Check if this specific ticket already has a linked feature
-  const { extensionFields } = await aha.graphQuery(`
-{
-  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}", value: "${id}"}) {
-    nodes {
-      value
-      extensionFieldable {
-        ... on Feature {
-          referenceNum
-          name
-        }
-      }
-    }
-  }
-}`);
+  const existingNodes = await fetchExtensionFields({ value: id });
 
   // If this ticket already has a feature, return it
-  if (extensionFields.nodes.length > 0) {
-    const existingFeature = extensionFields.nodes[0].extensionFieldable;
+  if (existingNodes.length > 0) {
+    const existingFeature = existingNodes[0].extensionFieldable;
     sharedStore.importedItems.value[id] = existingFeature;
     sharedStore.importing[id] = false;
     return existingFeature;
