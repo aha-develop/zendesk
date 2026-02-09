@@ -34,8 +34,9 @@ export function loadData() {
     sharedStore.loaded = true;
     loadViews();
     loadUserFields();
-    loadImportedItems();
   }
+  // Always refresh imported items to catch changes from other users/sessions
+  loadImportedItems();
 }
 
 export async function checkAuth() {
@@ -115,6 +116,29 @@ export async function importItem(item) {
   const { id } = item.ticket;
   sharedStore.importing[id] = true;
 
+  // Check if a feature already exists for this ticket (prevents duplicates across tabs/sessions)
+  const { extensionFields } = await aha.graphQuery(`
+{
+  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
+    nodes {
+      value
+      extensionFieldable {
+        ... on Feature {
+          referenceNum
+          name
+        }
+      }
+    }
+  }
+}`);
+
+  const existingField = extensionFields.nodes.find(field => String(field.value) === String(id));
+  if (existingField) {
+    sharedStore.importedItems.value[id] = existingField.extensionFieldable;
+    sharedStore.importing[id] = false;
+    return existingField.extensionFieldable;
+  }
+
   const feature = new window.aha.models.Feature({
     name: item.subject,
     description: descriptionForItem(item),
@@ -168,7 +192,7 @@ export async function updateSetting(key, mutatorOrValue, scope = "user") {
         }
       }
     }
-  `;
+`;
 
   await aha.graphMutate(mutation);
   return newValue;
@@ -194,8 +218,9 @@ export async function loadViewData(id, options = {}) {
 
 export async function refreshData() {
   sharedStore.refreshing = true;
-  await Promise.all(
-    sharedStore.dashboardViews.value.map(dashboardView => loadViewData(dashboardView.id, { force: true })),
-  );
+  await Promise.all([
+    ...sharedStore.dashboardViews.value.map(dashboardView => loadViewData(dashboardView.id, { force: true })),
+    loadImportedItems(),
+  ]);
   sharedStore.refreshing = false;
 }
