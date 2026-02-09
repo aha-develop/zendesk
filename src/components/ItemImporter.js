@@ -11,7 +11,7 @@ const ItemImporter = ({ item }) => {
     return null;
   }
 
-  const { id } = item.ticket;
+  const id = String(item.ticket.id);
   const importedItem = importedItems.value[id];
   if (importedItem) {
     const { type = "Feature", referenceNum } = importedItem;
