@@ -116,7 +116,7 @@ export async function importItem(item) {
   const { id } = item.ticket;
   sharedStore.importing[id] = true;
 
-  // Check if a feature already exists for this ticket (prevents duplicates across tabs/sessions)
+  // Query all linked features and merge into cache, incase changes have taken place in this list since the last operation
   const { extensionFields } = await aha.graphQuery(`
 {
   extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
@@ -132,11 +132,16 @@ export async function importItem(item) {
   }
 }`);
 
-  const existingField = extensionFields.nodes.find(field => String(field.value) === String(id));
-  if (existingField) {
-    sharedStore.importedItems.value[id] = existingField.extensionFieldable;
+  const updates = {};
+  extensionFields.nodes.forEach(field => {
+    updates[field.value] = field.extensionFieldable;
+  });
+  Object.assign(sharedStore.importedItems.value, updates);
+
+  // If this ticket already has a feature, return it
+  if (sharedStore.importedItems.value[id]) {
     sharedStore.importing[id] = false;
-    return existingField.extensionFieldable;
+    return sharedStore.importedItems.value[id];
   }
 
   const feature = new window.aha.models.Feature({
