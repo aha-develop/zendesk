@@ -63,11 +63,10 @@ export async function loadUserFields() {
   sharedStore.dashboardViews.loading = false;
 }
 
-export async function loadImportedItems() {
-  sharedStore.importedItems.loading = true;
+async function fetchExtensionFieldsPage(page) {
   const { extensionFields } = await aha.graphQuery(`
 {
-  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
+  extensionFields(page: ${page}, per: 500, filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
     nodes {
       value
       extensionFieldable {
@@ -76,19 +75,37 @@ export async function loadImportedItems() {
           name
         }
       }
-      __typename
     }
-    __typename
   }
 }
 `);
+  return extensionFields.nodes;
+}
 
-  sharedStore.importedItems.value = extensionFields.nodes.reduce((acc, extensionField) => {
-    acc[extensionField.value] = extensionField.extensionFieldable;
+export async function loadImportedItems({ silent = false } = {}) {
+  if (!silent) {
+    sharedStore.importedItems.loading = true;
+  }
+
+  let page = 1;
+  let allNodes = [];
+  let nodes;
+
+  do {
+    nodes = await fetchExtensionFieldsPage(page);
+    allNodes = allNodes.concat(nodes);
+    page++;
+  } while (nodes.length === 500);
+
+  const updates = allNodes.reduce((acc, extensionField) => {
+    acc[String(extensionField.value)] = extensionField.extensionFieldable;
     return acc;
   }, {});
+  Object.assign(sharedStore.importedItems.value, updates);
 
-  sharedStore.importedItems.loading = false;
+  if (!silent) {
+    sharedStore.importedItems.loading = false;
+  }
 }
 
 export async function addDashboardView({ id, title }) {
@@ -113,13 +130,13 @@ export async function removeDashboardView(id) {
 }
 
 export async function importItem(item) {
-  const { id } = item.ticket;
+  const id = String(item.ticket.id);
   sharedStore.importing[id] = true;
 
-  // Query all linked features and merge into cache, incase changes have taken place in this list since the last operation
+  // Check if this specific ticket already has a linked feature
   const { extensionFields } = await aha.graphQuery(`
 {
-  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"}) {
+  extensionFields(filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}", value: "${id}"}) {
     nodes {
       value
       extensionFieldable {
@@ -132,16 +149,12 @@ export async function importItem(item) {
   }
 }`);
 
-  const updates = {};
-  extensionFields.nodes.forEach(field => {
-    updates[field.value] = field.extensionFieldable;
-  });
-  Object.assign(sharedStore.importedItems.value, updates);
-
   // If this ticket already has a feature, return it
-  if (sharedStore.importedItems.value[id]) {
+  if (extensionFields.nodes.length > 0) {
+    const existingFeature = extensionFields.nodes[0].extensionFieldable;
+    sharedStore.importedItems.value[id] = existingFeature;
     sharedStore.importing[id] = false;
-    return sharedStore.importedItems.value[id];
+    return existingFeature;
   }
 
   const feature = new window.aha.models.Feature({
@@ -151,11 +164,13 @@ export async function importItem(item) {
   });
 
   await feature.save({ query: feature.query.select("referenceNum") });
-
-  await feature.setExtensionField(EXTENSION_ID, TICKET_FIELD, item.ticket.id);
+  await feature.setExtensionField(EXTENSION_ID, TICKET_FIELD, id);
 
   sharedStore.importedItems.value[id] = feature;
   sharedStore.importing[id] = false;
+
+  // Refresh cache in background to catch changes from other users
+  loadImportedItems({ silent: true });
 
   return feature;
 }
