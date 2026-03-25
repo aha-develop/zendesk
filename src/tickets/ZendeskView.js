@@ -1,6 +1,6 @@
-import React from "https://cdn.skypack.dev/react";
-import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
-import { loadViewData, sharedStore } from "../store";
+import React from "react";
+import { view } from "@aha-app/react-easy-state";
+import { loadViewData } from "../store";
 import TicketsTable from "../components/TicketsTable";
 
 const ZendeskView = ({ dashboardView, data, view, onRemove }) => {

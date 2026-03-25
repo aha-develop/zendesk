@@ -1,5 +1,5 @@
-import React, { useRef } from "https://cdn.skypack.dev/react";
-import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
+import React, { useRef } from "react";
+import { view } from "@aha-app/react-easy-state";
 import { addDashboardView, sharedStore } from "../store";
 
 const AddView = ({ children }) => {

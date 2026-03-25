@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@aha-app/react-easy-state@^0.0.12-development":
+  version "0.0.12-development"
+  resolved "https://registry.yarnpkg.com/@aha-app/react-easy-state/-/react-easy-state-0.0.12-development.tgz#a4c2b19cfb3a52a83622e2a1fff1f88fedb40c2f"
+  integrity sha512-V18+9yvg4QmgJfhFsDk9VrzSSXlyKlzNOiYAZtMmatPFcRCVbwuL2mWknvBhweEoto7Hq+ONwxpHEuX3beQYpQ==
+  dependencies:
+    "@nx-js/observer-util" "^4.3.0-alpha.2"
+
 "@babel/code-frame@7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"
@@ -52,6 +59,11 @@
     js-yaml "^3.13.1"
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
+
+"@nx-js/observer-util@^4.3.0-alpha.2":
+  version "4.3.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@nx-js/observer-util/-/observer-util-4.3.0-alpha.2.tgz#0eaf0029860e19f26ac9721b1f53eb6fc91ebdda"
+  integrity sha512-15oX1btB2VAKHXEDJWLr4+DlmFhPTP2OHXIwjIgWhBhsZg8XjuyO1obqp/vOEHcia7HARJ2cNRyYZTDpOIsgZQ==
 
 "@types/json5@^0.0.29":
   version "0.0.29"

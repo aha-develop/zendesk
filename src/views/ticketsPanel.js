@@ -1,5 +1,5 @@
-import React from "https://cdn.skypack.dev/react";
-import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
+import React from "react";
+import { view } from "@aha-app/react-easy-state";
 import { zendeskFetch } from "../zendesk";
 import { checkAuth, loadData, loadViewData, sharedStore } from "../store";
 import NotConfigured from "../components/NotConfigured";
