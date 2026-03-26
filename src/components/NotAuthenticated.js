@@ -1,6 +1,6 @@
-import React from "https://cdn.skypack.dev/react";
+import React from "react";
 import { authenticateUser, sharedStore } from "../store";
-import { view } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
+import { view } from "@aha-app/react-easy-state";
 
 const NotAuthenticated = ({ extensionId }) => {
   const { loadingAuth } = sharedStore;

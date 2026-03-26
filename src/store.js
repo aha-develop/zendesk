@@ -1,5 +1,5 @@
 import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
-import { store } from "https://cdn.skypack.dev/@aha-app/react-easy-state";
+import { store } from "@aha-app/react-easy-state";
 import { getUserPreference, setUserPreference } from "./fields";
 import { descriptionForItem, zendeskFetch } from "./zendesk";
 

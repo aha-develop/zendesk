@@ -1,7 +1,7 @@
 {
   "name": "@aha-develop/zendesk",
   "description": "Zendesk integration extension",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": "Aha! (support@aha.io)",
   "repository": {
     "type": "git",
@@ -45,6 +45,9 @@
         }
       }
     }
+  },
+  "dependencies": {
+    "@aha-app/react-easy-state": "^0.0.12-development"
   },
   "devDependencies": {
     "eslint": "^7.22.0",
