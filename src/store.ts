@@ -19,12 +19,13 @@ export function makeStore() {
     users: {},
     viewData: {},
     views: { loading: true, value: null },
+    _tempObservable: null,
   });
 }
 
 export const sharedStore = makeStore();
 
-export function observable(value) {
+export function observable<T>(value: T): T {
   sharedStore._tempObservable = value;
   return sharedStore._tempObservable;
 }
@@ -64,8 +65,8 @@ export async function loadUserFields() {
 }
 
 async function fetchExtensionFields({ page, per, value } = {}) {
-  const pagination = page ? `page: ${page}, per: ${per}, ` : '';
-  const valueFilter = value ? `, value: "${value}"` : '';
+  const pagination = page ? `page: ${page}, per: ${per}, ` : "";
+  const valueFilter = value ? `, value: "${value}"` : "";
 
   const { extensionFields } = await aha.graphQuery(`
 {
