@@ -88,7 +88,4 @@ importer.on({ action: "renderRecord" }, async ({ record }) => {
   return <Card record={parsed.data} />;
 });
 
-importer.on({ filter: "renderRecordWrapped" }, () => {
-  console.log("wrapCard filter called");
-  return false;
-});
+importer.on({ filter: "renderRecordWrapped" }, () => false);
