@@ -59,7 +59,7 @@ importer.on(
       records: data.rows.map(item => ({
         uniqueId: String(item.ticket.id),
         identifier: String(item.ticket.id),
-        name: item.subject + " HI !! ",
+        name: item.subject,
         url: `https://${settings.subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`,
         description: descriptionForItem(item),
         status: item.ticket.status,
