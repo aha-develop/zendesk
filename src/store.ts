@@ -274,8 +274,6 @@ export async function loadViewData(id: number, options: { force?: boolean } = {}
       { codec: ExecutionResultCodec },
     ));
 
-    console.log("Fetched view data", { id, data });
-
     populateUsers(data.users);
 
     sharedStore.viewData[id].loading = false;
