@@ -1,11 +1,25 @@
-import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
 import { store } from "@aha-app/react-easy-state";
+import * as z from "zod";
+import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
 import { getUserPreference, setUserPreference } from "./fields";
+import {
+  ExecutionResultCodec,
+  ExtensionField,
+  ExtensionFieldsResponseCodec,
+  FeatureReference,
+  Store,
+  User,
+  UserCodec,
+  View,
+  ViewCodec,
+  ViewResponseCodec,
+  ZendeskItem,
+} from "./types";
 import { descriptionForItem, zendeskFetch } from "./zendesk";
 
 const DASHBOARD_VIEWS = "DASHBOARD_VIEWS";
 
-export function makeStore() {
+export function makeStore(): Store {
   return store({
     configured: false,
     loaded: false,
@@ -27,7 +41,7 @@ export const sharedStore = makeStore();
 
 export function observable<T>(value: T): T {
   sharedStore._tempObservable = value;
-  return sharedStore._tempObservable;
+  return sharedStore._tempObservable as T;
 }
 
 export function loadData() {
@@ -49,8 +63,10 @@ export async function checkAuth() {
 export async function authenticateUser(options = {}) {
   sharedStore.loadingAuth = true;
   try {
-    sharedStore.authenticatedUser = (await zendeskFetch("/users/me", {}, options)).user;
-  } catch (e) {
+    sharedStore.authenticatedUser = (
+      await zendeskFetch("/users/me", {}, { ...options, codec: z.object({ user: UserCodec }) })
+    ).user;
+  } catch {
     // Failed, remove authenticatedUser
     sharedStore.authenticatedUser = null;
   } finally {
@@ -60,15 +76,19 @@ export async function authenticateUser(options = {}) {
 
 export async function loadUserFields() {
   sharedStore.dashboardViews.loading = true;
-  sharedStore.dashboardViews.value = (await getUserPreference(DASHBOARD_VIEWS)) || [];
+  sharedStore.dashboardViews.value = await loadDashboardViews();
   sharedStore.dashboardViews.loading = false;
 }
 
-async function fetchExtensionFields({ page, per, value } = {}) {
+async function fetchExtensionFields({
+  page,
+  per,
+  value,
+}: { page?: number; per?: number; value?: string } = {}): Promise<ExtensionField[]> {
   const pagination = page ? `page: ${page}, per: ${per}, ` : "";
   const valueFilter = value ? `, value: "${value}"` : "";
 
-  const { extensionFields } = await aha.graphQuery(`
+  const res = await aha.graphQuery(`
 {
   extensionFields(${pagination}filters: {extensionIdentifier: "${EXTENSION_ID}", extensionFieldableType: FEATURE, name: "${TICKET_FIELD}"${valueFilter}}) {
     nodes {
@@ -83,6 +103,15 @@ async function fetchExtensionFields({ page, per, value } = {}) {
   }
 }
 `);
+
+  const parsed = ExtensionFieldsResponseCodec.safeParse(res);
+  if (!parsed.success) {
+    console.error("Failed to parse extension fields response", { error: z.prettifyError(parsed.error) });
+    return [];
+  }
+
+  const { extensionFields } = parsed.data;
+
   return extensionFields.nodes;
 }
 
@@ -92,7 +121,7 @@ export async function loadImportedItems({ silent = false } = {}) {
   }
 
   let page = 1;
-  let allNodes = [];
+  let allNodes: ExtensionField[] = [];
   let nodes;
 
   do {
@@ -101,10 +130,9 @@ export async function loadImportedItems({ silent = false } = {}) {
     page++;
   } while (nodes.length === 500);
 
-  const updates = allNodes.reduce((acc, extensionField) => {
-    acc[String(extensionField.value)] = extensionField.extensionFieldable;
-    return acc;
-  }, {});
+  const updates = Object.fromEntries(
+    allNodes.map(extensionField => [String(extensionField.value), extensionField.extensionFieldable]),
+  );
   Object.assign(sharedStore.importedItems.value, updates);
 
   if (!silent) {
@@ -112,7 +140,20 @@ export async function loadImportedItems({ silent = false } = {}) {
   }
 }
 
-export async function addDashboardView({ id, title }) {
+async function loadDashboardViews(): Promise<View[]> {
+  const raw = await getUserPreference(DASHBOARD_VIEWS);
+  if (!raw) {
+    return [];
+  }
+  const parsed = z.array(ViewCodec).safeParse(raw);
+  if (!parsed.success) {
+    console.error("Failed to parse dashboard views, resetting to empty", z.treeifyError(parsed.error), raw);
+    return [];
+  }
+  return parsed.data;
+}
+
+export async function addDashboardView({ id, title }: { id: number; title: string }) {
   const currentViews = sharedStore.dashboardViews.value || [];
   const existingView = currentViews.find(currentView => currentView.id === id);
 
@@ -123,7 +164,7 @@ export async function addDashboardView({ id, title }) {
   }
 }
 
-export async function removeDashboardView(id) {
+export async function removeDashboardView(id: number) {
   const currentViews = sharedStore.dashboardViews.value || [];
   const newViews = (sharedStore.dashboardViews.value = observable(
     currentViews.filter(currentView => currentView.id !== id),
@@ -133,7 +174,7 @@ export async function removeDashboardView(id) {
   await setUserPreference(DASHBOARD_VIEWS, newViews);
 }
 
-export async function importItem(item) {
+export async function importItem(item: ZendeskItem) {
   const id = String(item.ticket.id);
   sharedStore.importing[id] = true;
 
@@ -148,16 +189,19 @@ export async function importItem(item) {
     return existingFeature;
   }
 
-  const feature = new window.aha.models.Feature({
+  const feature = new aha.models.Feature({
     name: item.subject,
+    // @ts-expect-error description is typed as only accepting a Note, but string has been passed historically
     description: descriptionForItem(item),
+    // @ts-expect-error Aha.Feature should accept a deep partial, but the typings are currently shallow
     team: { id: aha.project.id },
   });
 
   await feature.save({ query: feature.query.select("referenceNum") });
   await feature.setExtensionField(EXTENSION_ID, TICKET_FIELD, id);
 
-  sharedStore.importedItems.value[id] = feature;
+  // @ts-expect-error we know feature matches FeatureReference here
+  sharedStore.importedItems.value[id] = feature as FeatureReference;
   sharedStore.importing[id] = false;
 
   // Refresh cache in background to catch changes from other users
@@ -171,19 +215,24 @@ export async function loadViews(force = false) {
   if (force || !views.value) {
     views.loading = true;
 
-    const response = await zendeskFetch("/views");
+    const response = await zendeskFetch("/views", {}, { codec: ViewResponseCodec });
     views.value = response.views.filter(view => view.active);
 
     views.loading = false;
   }
 }
 
-export async function updateSetting(key, mutatorOrValue, scope = "user") {
+export async function updateSetting<T>(
+  key: string,
+  mutatorOrValue: T | ((currentValue?: unknown) => T | Promise<T>),
+  scope = "user",
+) {
   const { settings } = sharedStore;
   const currentValue = settings[key];
   const newValue = observable(
+    // @ts-expect-error mutateOrValue is a function, that'll do
     typeof mutatorOrValue === "function" ? await mutatorOrValue(currentValue) : mutatorOrValue,
-  );
+  ) as T;
   settings[key] = newValue;
 
   const mutation = `
@@ -209,17 +258,21 @@ export async function updateSetting(key, mutatorOrValue, scope = "user") {
   return newValue;
 }
 
-function populateUsers(users) {
+function populateUsers(users: User[]) {
   users.forEach(user => {
     sharedStore.users[user.id] = user;
   });
 }
 
-export async function loadViewData(id, options = {}) {
+export async function loadViewData(id: number, options: { force?: boolean } = {}) {
   const { force = false } = options;
   if (force || !(id in sharedStore.viewData)) {
     sharedStore.viewData[id] = { loading: true, data: null };
-    const data = (sharedStore.viewData[id].data = await zendeskFetch(`/views/${id}/execute`));
+    const data = (sharedStore.viewData[id].data = await zendeskFetch(
+      `/views/${id}/execute`,
+      {},
+      { codec: ExecutionResultCodec },
+    ));
 
     populateUsers(data.users);
 
