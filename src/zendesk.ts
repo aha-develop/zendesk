@@ -1,6 +1,27 @@
+import { z } from "zod";
 import { settings } from "./extension";
+import { ZendeskItem } from "./types";
 
-export async function zendeskFetch(path, data = {}, options = {}) {
+interface ZendeskFetchOptions {
+  method?: string;
+  authOptions?: Record<string, unknown>;
+}
+
+export async function zendeskFetch<T extends z.ZodType>(
+  path: string,
+  data: Record<string, unknown>,
+  options: ZendeskFetchOptions & { codec: T },
+): Promise<z.infer<T>>;
+export async function zendeskFetch(
+  path: string,
+  data?: Record<string, unknown>,
+  options?: ZendeskFetchOptions,
+): Promise<unknown>;
+export async function zendeskFetch(
+  path: string,
+  data: Record<string, unknown> = {},
+  options: ZendeskFetchOptions & { codec?: z.ZodType } = {},
+) {
   const { method = "GET", authOptions = {} } = options;
 
   const { subdomain } = settings;
@@ -35,10 +56,18 @@ export async function zendeskFetch(path, data = {}, options = {}) {
     throw new Error(result.errors[0].message);
   }
 
+  if (options.codec) {
+    try {
+      return options.codec.parse(result);
+    } catch (err) {
+      throw new Error(`Failed to parse Zendesk response: ${z.prettifyError(err)}`);
+    }
+  }
+
   return result;
 }
 
-export const descriptionForItem = item => {
+export const descriptionForItem = (item: ZendeskItem) => {
   const { ticket } = item;
 
   return [
