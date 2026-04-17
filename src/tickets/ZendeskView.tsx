@@ -26,8 +26,10 @@ const ZendeskView = ({
   }, [fetchData, dashboardView.id]);
 
   return (
-    <section>
-      <SectionTitle title={view.title} onRemove={onRemove} />
+    <aha-panel>
+      <div slot="heading">
+        <SectionTitle title={view.title} onRemove={onRemove} />
+      </div>
       {loading || !viewData ? (
         <div className="subsection" style={{ fontSize: 28, textAlign: "center" }}>
           <aha-spinner />
@@ -37,7 +39,7 @@ const ZendeskView = ({
           <TicketsTable viewData={viewData} view={view} />
         </div>
       )}
-    </section>
+    </aha-panel>
   );
 };
 

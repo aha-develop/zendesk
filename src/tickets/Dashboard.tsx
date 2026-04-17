@@ -26,18 +26,20 @@ const Dashboard = () => {
     return <EmptyState />;
   } else {
     return (
-      <div className="sections" style={{ alignItems: "center" }}>
-        <aha-flex gap="1rem" align-items="baseline" justify-content="space-between">
-          <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
-            <span slot="prefix">
-              {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
-            </span>
-            <span style={{ marginLeft: ".75ch" }}>{refreshing ? "Refreshing…" : "Refresh views"}</span>
-          </aha-button>
-          <AddView>
-            <h5 style={{ margin: 0 }}>Zendesk views</h5>
-          </AddView>
-        </aha-flex>
+      <div className="sections" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <aha-panel disableHeader={true}>
+          <aha-split>
+            <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
+              <span slot="prefix">
+                {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
+              </span>
+              <span style={{ marginLeft: ".75ch" }}>{refreshing ? "Refreshing…" : "Refresh views"}</span>
+            </aha-button>
+            <AddView>
+              <h5 style={{ margin: 0 }}>Zendesk views</h5>
+            </AddView>
+          </aha-split>
+        </aha-panel>
 
         {dashboardViews.value.map(dashboardView => {
           const view = views.value.find(view => view.id === dashboardView.id);

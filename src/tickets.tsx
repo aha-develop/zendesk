@@ -11,8 +11,8 @@ const tickets: Aha.RenderExtension = (extensionProps, { identifier }) => {
     const { authenticatedUser, settings } = sharedStore;
 
     return (
-      <div className="sidebar-layout sidebar-layout--scroll">
-        <Styles />
+      <div>
+        {/* <Styles /> */}
 
         <div className="page sidebar-layout__content">
           <div className="page-nav">

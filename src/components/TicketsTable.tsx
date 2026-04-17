@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { view } from "@aha-app/react-easy-state";
+import { useMemo } from "react";
 import { sharedStore } from "../store";
-import ItemImporter from "./ItemImporter";
-import { Column, View, ViewData, ZendeskItem } from "../types";
 import { columnFormatter, idToData } from "../tickets/columnFormatter";
 import { Group } from "../tickets/Group";
+import { Column, View, ViewData, ZendeskItem } from "../types";
 
 const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) => {
   const items = viewData?.rows;
@@ -37,7 +37,7 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
       }
     }
 
-    return items.reduce((acc, row) => {
+    return items.reduce<Record<string, ZendeskItem[]>>((acc, row) => {
       const groupName = String(row[group.id] || row[group.id + "_id"] || "");
       return {
         ...acc,
@@ -72,24 +72,13 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
     return groupIds;
   }, [group, groupData, viewData]);
 
-  // const execution = viewData?.execution;
-
   const groupFormatter = columnFormatter(group, viewData, subdomain);
-
   const formatters = columns?.map(column => columnFormatter(column, viewData, subdomain));
-  // console.log("Formatters", formatters);
-
-  console.log("columns", columns);
-  // console.log("groupedData", groupData);
 
   return (
     <table className="record-table record-table--settings-page">
       <thead>
         <tr>
-          {/* <th>Ticket name</th>
-          <th>Customer</th>
-          <th>Assignee</th>
-          <th>Feature</th> */}
           {columns.map(col => (
             <th style={{ position: "sticky", top: "0px" }} key={col.id}>
               {col.title}
@@ -98,24 +87,6 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
         </tr>
       </thead>
       <tbody>
-        {/* {items.map(item => (
-          <tr key={item.ticket.id} className="zendesk-ticket">
-            <td>
-              <a
-                target="_blank"
-                href={`https://${subdomain}.zendesk.com/agent/tickets/${item.ticket.id}`}
-                rel="noreferrer noopener"
-              >
-                {item.subject}
-              </a>
-            </td>
-            <td>{sharedStore.users[item.requester_id]?.name}</td>
-            <td>{sharedStore.users[item.assignee_id]?.name}</td>
-            <td>
-              <ItemImporter item={item} />
-            </td>
-          </tr>
-        ))} */}
         {groups.map(groupName => (
           <Group
             key={groupName}

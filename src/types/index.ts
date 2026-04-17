@@ -32,9 +32,9 @@ const ColumnCodec = z.looseObject({
 export type Column = z.infer<typeof ColumnCodec>;
 
 const GroupCodec = z.looseObject({
-  id: z.string(),
-  title: z.string(),
-  order: OrderCodec,
+  id: z.union([z.number(), z.string()]),
+  title: z.string().optional(),
+  order: OrderCodec.optional(),
 });
 
 export type Group = z.infer<typeof GroupCodec>;
@@ -117,7 +117,7 @@ const ZendeskItemCodec = z.looseObject({
   subject: z.string(),
   assignee_id: z.number().nullish(),
   requester_id: z.number().nullish(),
-  group: z.number().nullish(),
+  group: z.string().nullish(),
   locale: z.string().nullish(),
   // according to columnFormatter // TODO check this
   custom_status_id: z.number().nullish(),
