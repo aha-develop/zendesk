@@ -32,7 +32,7 @@
       "views": {
         "tickets": {
           "title": "Zendesk dashboard",
-          "entryPoint": "src/tickets.js",
+          "entryPoint": "src/tickets.tsx",
           "host": "page",
           "location": {
             "menu": "Work"
@@ -47,8 +47,9 @@
     }
   },
   "peerDependencies": {
-    "zod": "^4.3.6",
-    "@aha-app/react-easy-state": "^0.0.12-development"
+    "@aha-app/react-easy-state": "^0.0.12-development",
+    "moment": "^2.29.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
@@ -65,6 +66,7 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-react": "^7.36.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "moment": "^2.29.4",
     "prettier": "^2.2.1"
   }
 }

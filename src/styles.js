@@ -35,7 +35,7 @@ const Styles = () => {
           color: #999999;
         }
         .sections {
-          background-color: var(--aha-gray-100);
+          // background-color: var(--aha-gray-100);
           display: flex;
           padding: 16px;
           gap: 18px;
@@ -44,20 +44,21 @@ const Styles = () => {
           flex: 1;
         }
         .sections > * {
-          width: 70vh;
+          /* width: 80vh; */
           min-width: 600px;
         }
         .sections section {
-          background: white;
-          border: 1px solid #e1e1e1;
-          box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.08);
+          /* background: white;
+           border: 1px solid #e1e1e1;
+           box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.08);
+           */
           border-radius: 4px;
           min-height: 100px;
           display: flex;
           flex-direction: column;
         }
         .sections .section__title {
-          border-bottom: 1px solid var(--aha-gray-400);
+          /* border-bottom: 1px solid var(--aha-gray-400); */
           padding: 15px 21px;
         }
         .sections h2 {
@@ -66,7 +67,7 @@ const Styles = () => {
           font-weight: 600;
           font-size: 18px;
           line-height: 18px;
-          color: #000000;
+          /* color: #000000; */
         }
         .sections .sidebar {
           flex-grow: 1;

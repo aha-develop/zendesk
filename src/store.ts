@@ -3,7 +3,7 @@ import * as z from "zod";
 import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
 import { getUserPreference, setUserPreference } from "./fields";
 import {
-  ExecutionResultCodec,
+  DashboardViewCodec,
   ExtensionField,
   ExtensionFieldsResponseCodec,
   FeatureReference,
@@ -11,7 +11,7 @@ import {
   User,
   UserCodec,
   View,
-  ViewCodec,
+  ViewDataCodec,
   ViewResponseCodec,
   ZendeskItem,
 } from "./types";
@@ -23,16 +23,16 @@ export function makeStore(): Store {
   return store({
     configured: false,
     loaded: false,
-    dashboardViews: { loading: true, value: [] },
+    dashboardViews: { loading: false, value: [] },
     settings,
     authenticatedUser: null,
-    importedItems: { loading: true, value: {} },
+    importedItems: { loading: false, value: {} },
     importing: {},
-    loadingAuth: true,
+    loadingAuth: false,
     refreshing: false,
     users: {},
     viewData: {},
-    views: { loading: true, value: null },
+    views: { loading: false, value: null },
     _tempObservable: null,
   });
 }
@@ -145,9 +145,9 @@ async function loadDashboardViews(): Promise<View[]> {
   if (!raw) {
     return [];
   }
-  const parsed = z.array(ViewCodec).safeParse(raw);
+  const parsed = z.array(DashboardViewCodec).safeParse(raw);
   if (!parsed.success) {
-    console.error("Failed to parse dashboard views, resetting to empty", z.treeifyError(parsed.error), raw);
+    console.error("Failed to parse dashboard views, resetting to empty", z.prettifyError(parsed.error), raw);
     return [];
   }
   return parsed.data;
@@ -271,7 +271,7 @@ export async function loadViewData(id: number, options: { force?: boolean } = {}
     const data = (sharedStore.viewData[id].data = await zendeskFetch(
       `/views/${id}/execute`,
       {},
-      { codec: ExecutionResultCodec },
+      { codec: ViewDataCodec },
     ));
 
     populateUsers(data.users);

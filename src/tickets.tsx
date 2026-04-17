@@ -6,19 +6,9 @@ import NotConfigured from "./components/NotConfigured";
 import NotAuthenticated from "./components/NotAuthenticated";
 import Styles from "./styles";
 
-function tickets(extensionProps, { identifier }) {
+const tickets: Aha.RenderExtension = (extensionProps, { identifier }) => {
   const App = view(() => {
     const { authenticatedUser, settings } = sharedStore;
-
-    let content;
-
-    if (!settings.subdomain) {
-      content = <NotConfigured identifier={identifier} />;
-    } else if (!authenticatedUser) {
-      content = <NotAuthenticated />;
-    } else {
-      content = <Dashboard />;
-    }
 
     return (
       <div className="sidebar-layout sidebar-layout--scroll">
@@ -41,7 +31,13 @@ function tickets(extensionProps, { identifier }) {
               )}
             </div>
           </div>
-          {content}
+          {!settings.subdomain ? (
+            <NotConfigured identifier={identifier} />
+          ) : !authenticatedUser ? (
+            <NotAuthenticated />
+          ) : (
+            <Dashboard />
+          )}
         </div>
       </div>
     );
@@ -51,6 +47,6 @@ function tickets(extensionProps, { identifier }) {
   checkAuth();
 
   return <App />;
-}
+};
 
 aha.on("tickets", tickets);
