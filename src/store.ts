@@ -63,9 +63,8 @@ export async function checkAuth() {
 export async function authenticateUser(options = {}) {
   sharedStore.loadingAuth = true;
   try {
-    sharedStore.authenticatedUser = (
-      await zendeskFetch("/users/me", {}, { ...options, codec: z.object({ user: UserCodec }) })
-    ).user;
+    const me = await zendeskFetch("/users/me", {}, { ...options, codec: z.object({ user: UserCodec }) });
+    sharedStore.authenticatedUser = me.user;
   } catch {
     // Failed, remove authenticatedUser
     sharedStore.authenticatedUser = null;
@@ -122,7 +121,7 @@ export async function loadImportedItems({ silent = false } = {}) {
 
   let page = 1;
   let allNodes: ExtensionField[] = [];
-  let nodes;
+  let nodes: ExtensionField[] = [];
 
   do {
     nodes = await fetchExtensionFields({ page, per: 500 });

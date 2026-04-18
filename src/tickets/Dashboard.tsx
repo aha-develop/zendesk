@@ -6,11 +6,11 @@ import ZendeskView from "./ZendeskView";
 import { loadData, refreshData, removeDashboardView, sharedStore } from "../store";
 
 const Dashboard = () => {
-  const { dashboardViews, refreshing, views, viewData } = sharedStore;
+  const { dashboardViews, refreshing, views } = sharedStore;
 
   useEffect(() => {
     loadData();
-  });
+  }, []);
 
   if (views.loading || dashboardViews.loading) {
     return (
@@ -26,9 +26,9 @@ const Dashboard = () => {
     return <EmptyState />;
   } else {
     return (
-      <div className="sections" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <aha-panel disableHeader={true}>
-          <aha-split>
+      <div className="sections" style={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
+        <aha-panel>
+          <aha-split slot="heading">
             <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
               <span slot="prefix">
                 {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
@@ -48,16 +48,8 @@ const Dashboard = () => {
             return null;
           }
 
-          const data = viewData[dashboardView.id];
-
           return (
-            <ZendeskView
-              key={dashboardView.id}
-              dashboardView={dashboardView}
-              data={data}
-              view={view}
-              onRemove={() => removeDashboardView(dashboardView.id)}
-            />
+            <ZendeskView key={dashboardView.id} view={view} onRemove={() => removeDashboardView(dashboardView.id)} />
           );
         })}
       </div>

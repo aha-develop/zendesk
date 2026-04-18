@@ -40,7 +40,7 @@
         },
         "ticketsPanel": {
           "title": "Zendesk tickets",
-          "entryPoint": "src/views/ticketsPanel.js",
+          "entryPoint": "src/views/ticketsPanel.tsx",
           "host": "panel"
         }
       }
