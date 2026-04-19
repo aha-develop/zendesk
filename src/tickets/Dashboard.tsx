@@ -1,16 +1,15 @@
 import React, { useEffect } from "react";
 import { view } from "@aha-app/react-easy-state";
-import AddView from "./AddView";
 import EmptyState from "./EmptyState";
 import ZendeskView from "./ZendeskView";
-import { loadData, refreshData, removeDashboardView, sharedStore } from "../store";
+import { loadData, removeDashboardView, sharedStore } from "../store";
 
 const Dashboard = () => {
-  const { dashboardViews, refreshing, views, viewData } = sharedStore;
+  const { dashboardViews, views } = sharedStore;
 
   useEffect(() => {
     loadData();
-  });
+  }, []);
 
   if (views.loading || dashboardViews.loading) {
     return (
@@ -26,19 +25,7 @@ const Dashboard = () => {
     return <EmptyState />;
   } else {
     return (
-      <div className="sections" style={{ alignItems: "center" }}>
-        <aha-flex gap="1rem" align-items="baseline" justify-content="space-between">
-          <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
-            <span slot="prefix">
-              {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
-            </span>
-            <span style={{ marginLeft: ".75ch" }}>{refreshing ? "Refreshing…" : "Refresh views"}</span>
-          </aha-button>
-          <AddView>
-            <h5 style={{ margin: 0 }}>Zendesk views</h5>
-          </AddView>
-        </aha-flex>
-
+      <aha-stack>
         {dashboardViews.value.map(dashboardView => {
           const view = views.value.find(view => view.id === dashboardView.id);
 
@@ -46,19 +33,11 @@ const Dashboard = () => {
             return null;
           }
 
-          const data = viewData[dashboardView.id];
-
           return (
-            <ZendeskView
-              key={dashboardView.id}
-              dashboardView={dashboardView}
-              data={data}
-              view={view}
-              onRemove={() => removeDashboardView(dashboardView.id)}
-            />
+            <ZendeskView key={dashboardView.id} view={view} onRemove={() => removeDashboardView(dashboardView.id)} />
           );
         })}
-      </div>
+      </aha-stack>
     );
   }
 };

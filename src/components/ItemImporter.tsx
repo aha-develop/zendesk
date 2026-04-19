@@ -14,7 +14,8 @@ const ItemImporter = ({ item }) => {
   const id = String(item.ticket.id);
   const importedItem = importedItems.value[id];
   if (importedItem) {
-    const { type = "Feature", referenceNum } = importedItem;
+    const referenceNum = importedItem.referenceNum;
+    const type = String(importedItem.__typename ?? "Feature");
     return (
       <a
         href={`/${type.toLowerCase()}s/${referenceNum}`}
@@ -22,11 +23,12 @@ const ItemImporter = ({ item }) => {
         onClick={event => {
           event.preventDefault();
           event.stopPropagation();
-
-          AhaDrawer.instance().showUrl(event.target.dataset.drawerUrl);
+          AhaDrawer.instance().showUrl(`/${type.toLowerCase()}s/${referenceNum}`);
         }}
       >
-        {referenceNum}
+        <aha-record-reference record-type={type} record-id={referenceNum}>
+          {referenceNum}
+        </aha-record-reference>
       </a>
     );
   } else if (importing[id]) {
