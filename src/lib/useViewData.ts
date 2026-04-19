@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useMemo } from "react";
 import { loadViewData, sharedStore } from "../store";
 import { View, ViewData, ZendeskItem } from "../types";
+import { idToData } from "../tickets/columnFormatter";
 
 export function useViewData(view: View): { loading: boolean; viewData: ViewData | null } {
   const { loading, data: viewData } = sharedStore.viewData?.[view.id] ?? { loading: false, data: null };
@@ -19,10 +20,13 @@ export function useViewData(view: View): { loading: boolean; viewData: ViewData 
     if (!searchTerm) return viewData;
 
     const searchValue = searchTerm.toLowerCase();
+    const columnsRender = Object.fromEntries(
+      viewData.columns.map(column => [column.id, idToData(column.id, viewData)] as const),
+    );
 
     const rows = viewData.rows.filter((row: ZendeskItem) => {
       return viewData.columns.some(column => {
-        const cellValue = String(row[column.id] ?? "").toLowerCase();
+        const cellValue = String(columnsRender[column.id](row) ?? "").toLowerCase();
         return cellValue.includes(searchValue);
       });
     });

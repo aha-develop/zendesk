@@ -4,7 +4,7 @@ import ItemImporter from "../components/ItemImporter";
 import { Column, Group, ViewData, ZendeskItem } from "../types";
 
 export function idToData(columnId: string | number | null, viewData: ViewData) {
-  return (item: ZendeskItem) => {
+  return (item: ZendeskItem): string | null | undefined => {
     if (!columnId) return null;
 
     switch (columnId) {
@@ -21,10 +21,10 @@ export function idToData(columnId: string | number | null, viewData: ViewData) {
       case "custom_status_id":
         const status = viewData.custom_statuses?.find(s => s.id === item.custom_status_id);
 
-        return status?.name;
+        return status?.name as string | undefined;
     }
 
-    return item[columnId];
+    return columnId in item ? String(item[columnId]) : null;
   };
 }
 
