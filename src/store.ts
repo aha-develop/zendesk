@@ -33,6 +33,7 @@ export function makeStore(): Store {
     users: {},
     viewData: {},
     views: { loading: false, value: null },
+    searchTerm: "",
     _tempObservable: null,
   });
 }
@@ -266,16 +267,22 @@ function populateUsers(users: User[]) {
 export async function loadViewData(id: number, options: { force?: boolean } = {}) {
   const { force = false } = options;
   if (force || !(id in sharedStore.viewData)) {
-    sharedStore.viewData[id] = { loading: true, data: null };
-    const data = (sharedStore.viewData[id].data = await zendeskFetch(
-      `/views/${id}/execute`,
-      {},
-      { codec: ViewDataCodec },
-    ));
+    if (!sharedStore.viewData[id]) {
+      sharedStore.viewData[id] = { loading: true, data: null };
+    } else {
+      sharedStore.viewData[id].loading = true;
+    }
+    try {
+      const data = (sharedStore.viewData[id].data = await zendeskFetch(
+        `/views/${id}/execute`,
+        {},
+        { codec: ViewDataCodec },
+      ));
 
-    populateUsers(data.users);
-
-    sharedStore.viewData[id].loading = false;
+      populateUsers(data.users);
+    } finally {
+      sharedStore.viewData[id].loading = false;
+    }
   }
 }
 
@@ -284,6 +291,11 @@ export async function refreshData() {
   await Promise.all([
     ...sharedStore.dashboardViews.value.map(dashboardView => loadViewData(dashboardView.id, { force: true })),
     loadImportedItems(),
-  ]);
-  sharedStore.refreshing = false;
+  ]).finally(() => {
+    sharedStore.refreshing = false;
+  });
+}
+
+export function setSearchTerm(term: string) {
+  sharedStore.searchTerm = term;
 }

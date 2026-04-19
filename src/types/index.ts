@@ -203,5 +203,6 @@ export type Store = {
   viewData: Record<number, { loading: boolean; data: ViewData | null }>;
   users: Record<number, User>;
   refreshing: boolean;
+  searchTerm?: string;
   _tempObservable: unknown;
 };

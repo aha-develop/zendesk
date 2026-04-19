@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { view } from "@aha-app/react-easy-state";
-import AddView from "./AddView";
 import EmptyState from "./EmptyState";
 import ZendeskView from "./ZendeskView";
-import { loadData, refreshData, removeDashboardView, sharedStore } from "../store";
+import { loadData, removeDashboardView, sharedStore } from "../store";
 
 const Dashboard = () => {
-  const { dashboardViews, refreshing, views } = sharedStore;
+  const { dashboardViews, views } = sharedStore;
 
   useEffect(() => {
     loadData();
@@ -26,21 +25,7 @@ const Dashboard = () => {
     return <EmptyState />;
   } else {
     return (
-      <div className="sections" style={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "1rem" }}>
-        <aha-panel>
-          <aha-split slot="heading">
-            <aha-button kind="link" loading={refreshing || null} onClick={refreshData}>
-              <span slot="prefix">
-                {refreshing ? <aha-spinner></aha-spinner> : <aha-icon icon="fa-regular fa-refresh" />}
-              </span>
-              <span style={{ marginLeft: ".75ch" }}>{refreshing ? "Refreshing…" : "Refresh views"}</span>
-            </aha-button>
-            <AddView>
-              <h5 style={{ margin: 0 }}>Zendesk views</h5>
-            </AddView>
-          </aha-split>
-        </aha-panel>
-
+      <aha-stack>
         {dashboardViews.value.map(dashboardView => {
           const view = views.value.find(view => view.id === dashboardView.id);
 
@@ -52,7 +37,7 @@ const Dashboard = () => {
             <ZendeskView key={dashboardView.id} view={view} onRemove={() => removeDashboardView(dashboardView.id)} />
           );
         })}
-      </div>
+      </aha-stack>
     );
   }
 };

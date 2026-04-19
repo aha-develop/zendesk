@@ -14,13 +14,9 @@ const ZendeskView = ({ view, onRemove }: { view: View; onRemove: () => void }) =
         <SectionTitle title={view.title} onRemove={onRemove} />
       </div>
       {loading || !viewData ? (
-        <div className="subsection" style={{ fontSize: 28, textAlign: "center" }}>
-          <aha-spinner />
-        </div>
+        <aha-loading-row rows="3" column-widths="450px" />
       ) : (
-        <div className="subsection">
-          <TicketsTable viewData={viewData} view={view} />
-        </div>
+        <TicketsTable viewData={viewData} view={view} />
       )}
     </aha-panel>
   );

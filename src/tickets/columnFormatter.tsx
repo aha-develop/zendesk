@@ -45,6 +45,7 @@ export function columnFormatter(
   const idTransformer = idToData(column.id, viewData);
 
   switch (column.id) {
+    case "ticket_id":
     case "subject":
       // eslint-disable-next-line react/display-name
       return ({ item }) => (

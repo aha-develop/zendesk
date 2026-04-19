@@ -1,7 +1,7 @@
 import React from "react";
 import { view } from "@aha-app/react-easy-state";
 import { useMemo } from "react";
-import { sharedStore } from "../store";
+import { loadViewData, sharedStore } from "../store";
 import { columnFormatter, idToData } from "../tickets/columnFormatter";
 import { Group } from "../tickets/Group";
 import { Column, View, ViewData, ZendeskItem } from "../types";
@@ -9,17 +9,13 @@ import { Column, View, ViewData, ZendeskItem } from "../types";
 const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) => {
   const items = viewData?.rows;
 
-  if (!items?.length) {
-    return <p>There are no tickets in this view.</p>;
-  }
-
-  const { settings } = sharedStore;
+  const { settings, searchTerm } = sharedStore;
   const subdomain = settings.subdomain;
+  const execution = view.execution;
+  const group = execution.group;
 
   const columns: Column[] = useMemo(() => [...viewData.columns, { id: "__aha_feature", title: "Feature" }], [viewData]);
 
-  const execution = view.execution;
-  const group = execution.group;
   const groupData: Record<string, ZendeskItem[]> = useMemo(() => {
     if (!group) return { "": items };
 
@@ -72,32 +68,54 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
     return groupIds;
   }, [group, groupData, viewData]);
 
-  const groupFormatter = columnFormatter(group, viewData, subdomain);
-  const formatters = columns?.map(column => columnFormatter(column, viewData, subdomain));
+  const groupFormatter = useMemo(() => columnFormatter(group, viewData, subdomain), [group, viewData, subdomain]);
+  const formatters = useMemo(
+    () => columns?.map(column => columnFormatter(column, viewData, subdomain)),
+    [columns, viewData, subdomain],
+  );
+
+  if (!items?.length) {
+    return searchTerm ? <p>No tickets match your search.</p> : <p>There are no tickets in this view.</p>;
+  }
 
   return (
-    <table className="record-table record-table--settings-page">
-      <thead>
-        <tr>
-          {columns.map(col => (
-            <th style={{ position: "sticky", top: "0px" }} key={col.id}>
-              {col.title}
-            </th>
+    <>
+      <table className="record-table record-table--settings-page">
+        <thead>
+          <tr>
+            {columns.map(col => (
+              <th style={{ position: "sticky", top: "0px", zIndex: 10 }} key={col.id} scope="col">
+                {col.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {groups.map(groupName => (
+            <Group
+              key={groupName}
+              items={groupData[groupName]}
+              groupName={groupName}
+              Formatter={groupFormatter}
+              formatters={formatters}
+            />
           ))}
-        </tr>
-      </thead>
-      <tbody>
-        {groups.map(groupName => (
-          <Group
-            key={groupName}
-            items={groupData[groupName]}
-            groupName={groupName}
-            Formatter={groupFormatter}
-            formatters={formatters}
-          />
-        ))}
-      </tbody>
-    </table>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th
+              colSpan={columns.length}
+              scope="row"
+              style={{ textAlign: "right", backgroundColor: "var(--aha-color-background-secondary)" }}
+            >
+              <aha-button kind="icon" onClick={() => loadViewData(view.id, { force: true })}>
+                <i className="fa-regular fa-refresh" />
+              </aha-button>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </>
   );
 };
 
