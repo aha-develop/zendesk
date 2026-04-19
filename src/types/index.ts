@@ -51,10 +51,6 @@ const ViewExecutionCodec = z.looseObject({
   sort_order: OrderCodec,
   group: GroupCodec.nullish(),
   sort: GroupCodec.nullish(),
-  // columns: z.array(ColumnCodec),
-  // fields: z.array(ColumnCodec),
-  // custom_fields: z.array(z.any()),
-  // custom_statuses: z.array(z.looseObject({ id: z.number() })).optional(),
 });
 
 export type ViewExecution = z.infer<typeof ViewExecutionCodec>;
@@ -69,18 +65,14 @@ export type DashboardView = z.infer<typeof DashboardViewCodec>;
 export const ViewCodec = z.looseObject({
   id: z.number(),
   title: z.string(),
-  // url: z.string().nullish(),
   active: z.boolean().nullish(),
   updated_at: z.coerce.date().nullish(),
   created_at: z.coerce.date().nullish(),
   position: z.number().nullish(),
   description: z.string().nullish(),
-  // maybe this is manually added here in Jeremy's version
   execution: ViewExecutionCodec.nullish(),
   conditions: ConditionsCodec.nullish(),
   restriction: RestrictionCodec.nullish(),
-  // watchable: z.boolean().nullish(),
-  // raw_title: z.string().nullish(),
 });
 
 export const ViewResponseCodec = z.looseObject({
@@ -119,7 +111,6 @@ const ZendeskItemCodec = z.looseObject({
   requester_id: z.number().nullish(),
   group: z.string().nullish(),
   locale: z.string().nullish(),
-  // according to columnFormatter // TODO check this
   custom_status_id: z.number().nullish(),
 });
 
