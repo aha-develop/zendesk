@@ -36,7 +36,10 @@ export async function zendeskFetch(
     parameters: { subdomain },
   });
 
-  const response = await fetch(`https://${subdomain}.zendesk.com/api/v2${path}`, {
+  const baseUrl = `https://${subdomain}.zendesk.com/api/v2`;
+  const url = path.startsWith(baseUrl) ? path : `${baseUrl}${path}`;
+
+  const response = await fetch(url, {
     method,
     mode: "cors",
     cache: "no-cache",
@@ -46,6 +49,16 @@ export async function zendeskFetch(
     },
     body: ["GET", "HEAD"].includes(method) ? null : JSON.stringify(data),
   });
+
+  // Rate limit handling - https://developer.zendesk.com/documentation/api-basics/best-practices/best-practices-for-avoiding-rate-limiting/#using-rate-limit-headers-in-your-application
+  if (response.status === 429) {
+    // Annoyingly Retry-After isn't in the Access-Control-Expose-Headers currently so chances are you won't have a value for this
+    // Default seems to be around 35 seconds
+    const wait = response.headers.get("Retry-After") ?? "5";
+    console.log(`Rate limited by Zendesk API. Retrying after ${wait} seconds...`);
+    await new Promise(resolve => setTimeout(resolve, parseInt(wait) * 1000));
+    return zendeskFetch(path, data, options);
+  }
 
   if (response.status !== 200) {
     throw new Error(`Zendesk request failed: ${response.status} ${response.statusText}: ${await response.text()}`);

@@ -11,6 +11,7 @@ import {
   User,
   UserCodec,
   View,
+  ViewData,
   ViewDataCodec,
   ViewResponseCodec,
   ZendeskItem,
@@ -272,14 +273,30 @@ export async function loadViewData(id: number, options: { force?: boolean } = {}
     } else {
       sharedStore.viewData[id].loading = true;
     }
+    const maxPages = 10;
+    let pageCount = 0;
+    let items: ZendeskItem[] = [];
+    let viewData: ViewData | null = null;
+    // Fetch first page, this will increment if required next iteration
+    let nextPage: string | null = `/views/${id}/execute`;
     try {
-      const data = (sharedStore.viewData[id].data = await zendeskFetch(
-        `/views/${id}/execute`,
-        {},
-        { codec: ViewDataCodec },
-      ));
+      do {
+        const data = await zendeskFetch(nextPage, {}, { codec: ViewDataCodec });
+        populateUsers(data.users);
+        items = items.concat(data.rows);
+        if (!viewData) {
+          // Set viewData on first page, subsequent pages will append rows and users but other data should be the same so no need to reset
+          viewData = data;
+        }
+        nextPage = data.next_page;
+        pageCount++;
+      } while (nextPage && pageCount < maxPages);
 
-      populateUsers(data.users);
+      // Store data and accumulated rows in store
+      sharedStore.viewData[id].data = {
+        ...viewData,
+        rows: items,
+      };
     } finally {
       sharedStore.viewData[id].loading = false;
     }
