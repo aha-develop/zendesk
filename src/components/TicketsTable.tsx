@@ -19,24 +19,6 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
   const groupData: Record<string, ZendeskItem[]> = useMemo(() => {
     if (!group) return { "": items };
 
-    // Conflicting documentation around sorting. It seems execution.sort is the correct way
-    // https://developer.zendesk.com/api-reference/ticketing/business-rules/views/#execution
-    const sort_by = execution.sort?.id; // execution.sort_by // this is what we had before, it would resolve to nice_id which is a column we don't have
-    const sort_order = execution.sort?.order; // execution.sort_order
-    if (sort_by) {
-      items.sort((a, b) => {
-        const aValue = a[sort_by];
-        const bValue = b[sort_by];
-        if (aValue < bValue) return -1;
-        if (aValue > bValue) return 1;
-        return 0;
-      });
-
-      if (sort_order === "desc") {
-        items.reverse();
-      }
-    }
-
     return items.reduce<Record<string, ZendeskItem[]>>((acc, row) => {
       const groupName = String(row[group.id] || row[group.id + "_id"] || "");
       return {
@@ -44,7 +26,7 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
         [groupName]: [...(acc[groupName] || []), row],
       };
     }, {});
-  }, [items, execution.sort, group]);
+  }, [items, group]);
 
   const groups = useMemo(() => {
     if (!group) return [""];
