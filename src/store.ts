@@ -275,28 +275,25 @@ export async function loadViewData(id: number, options: { force?: boolean } = {}
     }
     const maxPages = 10;
     let pageCount = 0;
-    let items: ZendeskItem[] = [];
-    let viewData: ViewData | null = null;
-    // Fetch first page, this will increment if required next iteration
     let nextPage: string | null = `/views/${id}/execute`;
     try {
       do {
         const data = await zendeskFetch(nextPage, {}, { codec: ViewDataCodec });
         populateUsers(data.users);
-        items = items.concat(data.rows);
-        if (!viewData) {
+        if (pageCount === 0) {
           // Set viewData on first page, subsequent pages will append rows and users but other data should be the same so no need to reset
-          viewData = data;
+          sharedStore.viewData[id].data = data;
+          // Set loading to false after first page, subsequent pages will append data, but we can start showing results immediately
+          // So this is really "initial load" / we have enough data to show something, rather than "fully loaded"
+          // worth it in order to give a responsive feel to loading, especially for larger views
+          sharedStore.viewData[id].loading = false;
+        } else {
+          // Append rows and users to existing data
+          sharedStore.viewData[id].data.rows = [...sharedStore.viewData[id].data.rows, ...data.rows];
         }
         nextPage = data.next_page;
         pageCount++;
       } while (nextPage && pageCount < maxPages);
-
-      // Store data and accumulated rows in store
-      sharedStore.viewData[id].data = {
-        ...viewData,
-        rows: items,
-      };
     } finally {
       sharedStore.viewData[id].loading = false;
     }
