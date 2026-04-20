@@ -1,7 +1,7 @@
 import React from "react";
 import { EXTENSION_ID, TICKET_FIELD, settings } from "./extension";
 import { descriptionForItem, zendeskFetch } from "./zendesk";
-import { ZendeskRecord, TicketsCodec, ZendeskRecordCodec } from "./types";
+import { ZendeskRecord, TicketsCodec, ZendeskRecordCodec, ViewResponseCodec } from "./types";
 import Card from "./components/Card";
 
 const importer = aha.getImporter("aha-develop.zendesk.import");
@@ -30,10 +30,10 @@ importer.on(
 );
 
 // For a particular filter, when it is dropped-down, provide a list of the possible values.
-importer.on({ action: "filterValues" }, async ({ filterName, filters }) => {
+importer.on({ action: "filterValues" }, async ({ filterName }) => {
   switch (filterName) {
     case "view": {
-      const response = await zendeskFetch("/views");
+      const response = await zendeskFetch("/views", {}, { codec: ViewResponseCodec });
       return response.views.filter(view => view.active).map(view => ({ value: view.id, text: view.title }));
     }
   }

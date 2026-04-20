@@ -29,44 +29,50 @@ const ColumnCodec = z.looseObject({
   title: z.string(),
 });
 
+export type Column = z.infer<typeof ColumnCodec>;
+
 const GroupCodec = z.looseObject({
-  id: z.string(),
-  title: z.string(),
-  order: OrderCodec,
+  id: z.union([z.number(), z.string()]),
+  title: z.string().optional(),
+  order: OrderCodec.optional(),
 });
+
+export type Group = z.infer<typeof GroupCodec>;
 
 const RestrictionCodec = z.looseObject({
   type: z.string(),
   id: z.number(),
 });
 
-const ViewExecutionConfigCodec = z.looseObject({
+const ViewExecutionCodec = z.looseObject({
   group_by: z.string().nullish(),
-  group_order: OrderCodec.nullish(),
   sort_by: z.string().nullish(),
+  group_order: OrderCodec.nullish(),
   sort_order: OrderCodec,
   group: GroupCodec.nullish(),
   sort: GroupCodec.nullish(),
-  columns: z.array(ColumnCodec),
-  fields: z.array(ColumnCodec),
-  custom_fields: z.array(z.any()),
-  custom_statuses: z.array(z.any()).optional(),
 });
+
+export type ViewExecution = z.infer<typeof ViewExecutionCodec>;
+
+export const DashboardViewCodec = z.object({
+  id: z.number(),
+  title: z.string(),
+});
+
+export type DashboardView = z.infer<typeof DashboardViewCodec>;
 
 export const ViewCodec = z.looseObject({
   id: z.number(),
   title: z.string(),
-  url: z.string().nullish(),
   active: z.boolean().nullish(),
   updated_at: z.coerce.date().nullish(),
   created_at: z.coerce.date().nullish(),
   position: z.number().nullish(),
   description: z.string().nullish(),
-  execution: ViewExecutionConfigCodec.nullish(),
+  execution: ViewExecutionCodec.nullish(),
   conditions: ConditionsCodec.nullish(),
   restriction: RestrictionCodec.nullish(),
-  watchable: z.boolean().nullish(),
-  raw_title: z.string().nullish(),
 });
 
 export const ViewResponseCodec = z.looseObject({
@@ -88,53 +94,41 @@ const LastCommentCodec = z.looseObject({
   public: z.boolean(),
 });
 
-const RowTicketCodec = z.looseObject({
-  id: z.number(),
-  subject: z.string(),
-  description: z.string(),
-  status: z.string(),
-  type: z.string().nullish(),
-  priority: z.string().nullish(),
-  url: z.string(),
-  last_comment: LastCommentCodec,
-});
-
-const RowCodec = z.looseObject({
-  group: z.number().nullish(),
-  locale: z.string().nullish(),
-  ticket: RowTicketCodec,
-});
-
-export const ExecutionResultCodec = z.looseObject({
-  columns: z.array(ColumnCodec),
-  groups: z.array(GroupCodec).nullish(),
-  rows: z.array(RowCodec),
-  view: z.object({ id: z.number() }),
-  users: z.array(UserCodec).nullish(),
-});
-
-export type ExecutionResult = z.infer<typeof ExecutionResultCodec>;
-
-// --- Tickets API ---
-
-const ZendeskTicketCodec = z.object({
+const ZendeskTicketCodec = z.looseObject({
   id: z.number(),
   status: z.string(),
   description: z.string().nullish(),
-  last_comment: z
-    .object({
-      body: z.string(),
-    })
-    .nullish(),
+  type: z.string().nullish(),
+  priority: z.string().nullish(),
+  url: z.string(),
+  last_comment: LastCommentCodec.nullish(),
 });
 
 const ZendeskItemCodec = z.looseObject({
   ticket: ZendeskTicketCodec,
   subject: z.string(),
   assignee_id: z.number().nullish(),
+  requester_id: z.number().nullish(),
+  group: z.string().nullish(),
+  locale: z.string().nullish(),
+  custom_status_id: z.number().nullish(),
 });
 
 export type ZendeskItem = z.infer<typeof ZendeskItemCodec>;
+
+// Result of calling the execute view endpoint
+// https://developer.zendesk.com/api-reference/ticketing/business-rules/views/#execute-view
+export const ViewDataCodec = z.looseObject({
+  columns: z.array(ColumnCodec),
+  groups: z.array(GroupCodec).optional(),
+  rows: z.array(ZendeskItemCodec),
+  view: z.object({ id: z.number() }),
+  // Not in the docs but in the data
+  users: z.array(UserCodec).nullish(),
+  next_page: z.string().nullish(),
+});
+
+export type ViewData = z.infer<typeof ViewDataCodec>;
 
 export const TicketsCodec = z.looseObject({
   rows: z.array(ZendeskItemCodec),
@@ -195,11 +189,12 @@ export type Store = {
   };
   dashboardViews: {
     loading: boolean;
-    value: View[] | null;
+    value: DashboardView[] | null;
   };
   importing: Record<string, boolean>;
-  viewData: Record<number, { loading: boolean; data: ExecutionResult | null }>;
+  viewData: Record<number, { loading: boolean; data: ViewData | null }>;
   users: Record<number, User>;
   refreshing: boolean;
+  searchTerm?: string;
   _tempObservable: unknown;
 };
