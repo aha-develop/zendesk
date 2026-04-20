@@ -125,6 +125,7 @@ export const ViewDataCodec = z.looseObject({
   view: z.object({ id: z.number() }),
   // Not in the docs but in the data
   users: z.array(UserCodec).nullish(),
+  next_page: z.string().nullish(),
 });
 
 export type ViewData = z.infer<typeof ViewDataCodec>;
