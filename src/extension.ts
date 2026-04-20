@@ -1,11 +1,12 @@
 export const EXTENSION_ID = "aha-develop.zendesk";
 
-type JSONValue = string | number | boolean | null | JSONValue[] | { [key: string]: JSONValue };
+const baseSettings = aha.settings.get(EXTENSION_ID) as Aha.Settings | undefined;
 
-const baseSettings = aha.settings.get(EXTENSION_ID) as undefined | Aha.Settings | Record<string, JSONValue>;
-export const settings: Record<string, JSONValue> & { subdomain: string } = {
+export type Settings = Aha.Settings & { subdomain: string };
+
+export const settings: Settings = {
   ...baseSettings,
-  subdomain: (baseSettings.subdomain ? String(baseSettings.subdomain) : "").trim(),
+  subdomain: (baseSettings?.subdomain ? String(baseSettings.subdomain) : "").trim(),
 };
 
 // Fields used on records
