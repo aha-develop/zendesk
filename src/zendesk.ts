@@ -51,7 +51,7 @@ export async function zendeskFetch(
     body: ["GET", "HEAD"].includes(method) ? null : JSON.stringify(data),
   });
 
-  const retryCount = options._retryCount ?? 0;
+  const retryCount = options._retryCount ?? 1;
 
   // Rate limit handling - https://developer.zendesk.com/documentation/api-basics/best-practices/best-practices-for-avoiding-rate-limiting/#using-rate-limit-headers-in-your-application
   if (response.status === 429 && retryCount < 10) {
