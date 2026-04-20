@@ -9,15 +9,15 @@ import { idToData } from "../tickets/columnFormatter";
  */
 export function useViewData(view: View): { loading: boolean; viewData: ViewData | null } {
   const { loading, data: viewData } = sharedStore.viewData?.[view.id] ?? { loading: false, data: null };
-  const fetchData = !!viewData && !loading;
+  const haveData = !!viewData && !loading;
   const searchTerm = useDeferredValue(sharedStore.searchTerm);
 
   // Load data for the view if we don't have it already
   useEffect(() => {
-    if (!fetchData) {
+    if (!haveData) {
       loadViewData(view.id);
     }
-  }, [fetchData, view.id]);
+  }, [haveData, view.id]);
 
   // Apply client side filtering based on the search term
   const filteredViewData: ViewData | null = useMemo(() => {
@@ -27,7 +27,7 @@ export function useViewData(view: View): { loading: boolean; viewData: ViewData 
 
     const searchValue = searchTerm.toLowerCase();
     const columnsRender = Object.fromEntries(
-      // Search the formatted column values, itToData is used to render the cells
+      // Search the formatted column values, idToData is used to render the cells
       viewData.columns.map(column => [column.id, idToData(column.id, viewData)] as const),
     );
 

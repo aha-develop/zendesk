@@ -6,7 +6,7 @@ import { columnFormatter, idToData } from "../tickets/columnFormatter";
 import { Group } from "../tickets/Group";
 import { Column, View, ViewData, ZendeskItem } from "../types";
 
-const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) => {
+const TicketsTable = ({ viewData, view }: { viewData: ViewData; view: View }) => {
   const items = viewData?.rows;
 
   const { settings, searchTerm } = sharedStore;
@@ -34,8 +34,6 @@ const TicketsTable = ({ viewData, view }: { viewData?: ViewData; view: View }) =
     if (!group?.order) return Object.keys(groupData);
 
     const idTransformer = idToData(group.id, viewData);
-
-    if (!group?.order) return Object.keys(groupData);
 
     const groupIds = Object.entries(groupData)
       .map(([id, rows]) => ({
