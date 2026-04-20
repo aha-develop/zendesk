@@ -11,7 +11,6 @@ import {
   User,
   UserCodec,
   View,
-  ViewData,
   ViewDataCodec,
   ViewResponseCodec,
   ZendeskItem,
