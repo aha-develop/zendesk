@@ -46,11 +46,6 @@
       }
     }
   },
-  "peerDependencies": {
-    "@aha-app/react-easy-state": "^0.0.12-development",
-    "moment": "^2.29.4",
-    "zod": "^4.3.6"
-  },
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@typescript-eslint/eslint-plugin": "^8.58.0",
@@ -66,7 +61,10 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-react": "^7.36.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "moment": "^2.29.4",
     "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "@aha-app/react-easy-state": "^0.0.12-development",
+    "zod": "^4.3.6"
   }
 }

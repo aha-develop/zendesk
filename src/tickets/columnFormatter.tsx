@@ -1,7 +1,7 @@
-import moment from "moment";
 import React from "react";
 import ItemImporter from "../components/ItemImporter";
 import { Column, Group, ViewData, ZendeskItem } from "../types";
+import { timeAgo } from "../lib/timeAgo";
 
 export function idToData(columnId: string | number | null, viewData: ViewData) {
   return (item: ZendeskItem): string | null | undefined => {
@@ -11,7 +11,7 @@ export function idToData(columnId: string | number | null, viewData: ViewData) {
       case "created":
       case "updated":
         const value = item[columnId];
-        return typeof value === "string" || typeof value === "number" ? moment(value).fromNow() : null;
+        return typeof value === "string" || typeof value === "number" ? timeAgo(value) : null;
       case "requester":
       case "assignee":
         const user_id = item[`${columnId}_id`];
