@@ -14,12 +14,6 @@ Install the Zendesk extension by clicking [here](https://secure.aha.io/settings/
 
 ## Working on the extension
 
-Install `aha-cli`:
-
-```sh
-npm install -g aha-cli
-```
-
 Clone the repo:
 
 ```sh
@@ -29,7 +23,7 @@ git clone https://github.com/aha-develop/zendesk.git
 Install required modules:
 
 ```sh
-yarn install
+pnpm i
 ```
 
 **Note: In order to install an extension into your Aha! Develop account, you must be an account administrator.**
@@ -37,8 +31,8 @@ yarn install
 Install the extension into Aha! and set up a watcher:
 
 ```sh
-aha extension:install
-aha extension:watch
+npx aha-cli extension:install
+npx aha-cli extension:watch
 ```
 
 Now, any change you make inside your working copy will automatically take effect in your Aha! account.
@@ -48,7 +42,7 @@ Now, any change you make inside your working copy will automatically take effect
 When you have finished working on your extension, package it into a `.gz` file so that others can install it:
 
 ```sh
-aha extension:build
+npx aha-cli extension:build
 ```
 
 After building, you can upload the `.gz` file to a publicly accessible URL, such as a GitHub release, so that others can install it using that URL.
