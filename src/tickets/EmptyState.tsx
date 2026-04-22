@@ -10,7 +10,9 @@ const EmptyState = () => (
       </div>
       <h3>Get started by adding Zendesk views</h3>
       <p>You can add multiple views to this page to maximize your work.</p>
-      <AddView />
+      <div style={{ display: "inline-flex", marginTop: "2rem" }}>
+        <AddView />
+      </div>
     </section>
   </div>
 );
