@@ -36,7 +36,7 @@ const TicketsPanel = view(
         </div>
       );
     } else if (panelSettings.view) {
-      const view = views.value.find(view => String(view.id) === panelSettings.view);
+      const view = views.value?.find(view => String(view.id) === panelSettings.view);
 
       if (!view) {
         return (

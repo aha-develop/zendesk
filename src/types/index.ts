@@ -16,7 +16,7 @@ const OrderCodec = z.enum(["asc", "desc"]);
 const AllCodec = z.looseObject({
   field: z.string(),
   operator: z.string(),
-  value: z.string().nullish(),
+  value: z.union([z.string(), z.array(z.string())]).nullish(),
 });
 
 const ConditionsCodec = z.looseObject({
